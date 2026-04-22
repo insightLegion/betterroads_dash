@@ -24,8 +24,18 @@ export default function ConditionCard({ area }) {
       padding: 16,
     }}>
       <div style={{ display: 'flex', alignItems: 'flex-end', gap: 6, marginBottom: 8 }}>
-        <span style={{ fontSize: 48, fontWeight: 500, lineHeight: 1 }}>{area.score}</span>
-        <span style={{ fontSize: 18, color: 'var(--text-muted)', paddingBottom: 6 }}>/100</span>
+        <span
+          className="mono"
+          style={{ fontSize: 48, fontWeight: 400, lineHeight: 1, letterSpacing: -1 }}
+        >
+          {area.score}
+        </span>
+        <span
+          className="mono"
+          style={{ fontSize: 18, color: 'var(--text-muted)', paddingBottom: 6 }}
+        >
+          /100
+        </span>
       </div>
       <div style={{ marginBottom: 8 }}>
         <SeverityBadge severity={area.severity} />

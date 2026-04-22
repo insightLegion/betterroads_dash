@@ -8,7 +8,7 @@ html, body, #root {
 
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-family: var(--font);
   font-weight: 400;
   background: var(--bg);
   color: var(--text);
@@ -27,7 +27,7 @@ button {
 }
 
 button:hover {
-  filter: brightness(0.95);
+  filter: brightness(0.97);
 }
 
 button:active {
@@ -59,14 +59,20 @@ a:hover {
   text-decoration: underline;
 }
 
+.mono {
+  font-family: var(--mono);
+  font-variant-numeric: tabular-nums;
+}
+
 .leaflet-container {
   height: 100%;
   width: 100%;
-  background: var(--bg);
+  background: #e8eadf;
+  font-family: var(--font);
 }
 
 .leaflet-tooltip {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-family: var(--font);
   font-size: 12px;
   font-weight: 500;
   border-radius: var(--radius-sm);
@@ -82,15 +88,6 @@ a:hover {
 @keyframes fadeIn {
   from { opacity: 0; }
   to { opacity: 1; }
-}
-
-.panel-slide {
-  animation: slideIn var(--ease);
-}
-
-@keyframes slideIn {
-  from { transform: translateX(320px); }
-  to { transform: translateX(0); }
 }
 
 ::-webkit-scrollbar {

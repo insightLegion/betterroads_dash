@@ -2,11 +2,13 @@ import { createContext, useContext, useState, useCallback, useMemo } from 'react
 
 const AppStateContext = createContext(null);
 
+// history arrays have 12 entries (Apr 25 -> Apr 26). Default to the latest month.
+const DEFAULT_MONTH_INDEX = 11;
+
 export function AppStateProvider({ children }) {
   const [activeScreen, setActiveScreen] = useState('map');
   const [selectedAreaId, setSelectedAreaId] = useState(null);
-  const [compareBeforeIndex, setCompareBeforeIndex] = useState(6);
-  const [compareAfterIndex, setCompareAfterIndex] = useState(11);
+  const [selectedMonthIndex, setSelectedMonthIndex] = useState(DEFAULT_MONTH_INDEX);
 
   const navigateTo = useCallback((screen, areaId) => {
     setActiveScreen(screen);
@@ -16,10 +18,9 @@ export function AppStateProvider({ children }) {
   const value = useMemo(() => ({
     activeScreen, setActiveScreen,
     selectedAreaId, setSelectedAreaId,
-    compareBeforeIndex, setCompareBeforeIndex,
-    compareAfterIndex, setCompareAfterIndex,
+    selectedMonthIndex, setSelectedMonthIndex,
     navigateTo
-  }), [activeScreen, selectedAreaId, compareBeforeIndex, compareAfterIndex, navigateTo]);
+  }), [activeScreen, selectedAreaId, selectedMonthIndex, navigateTo]);
 
   return (
     <AppStateContext.Provider value={value}>
