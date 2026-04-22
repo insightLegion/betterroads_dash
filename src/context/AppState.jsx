@@ -8,6 +8,7 @@ const DEFAULT_MONTH_INDEX = 11;
 export function AppStateProvider({ children }) {
   const [activeScreen, setActiveScreen] = useState('map');
   const [selectedAreaId, setSelectedAreaId] = useState(null);
+  const [selectedRoad, setSelectedRoad] = useState(null); // { areaId, roadName } | null
   const [selectedMonthIndex, setSelectedMonthIndex] = useState(DEFAULT_MONTH_INDEX);
 
   const navigateTo = useCallback((screen, areaId) => {
@@ -18,9 +19,10 @@ export function AppStateProvider({ children }) {
   const value = useMemo(() => ({
     activeScreen, setActiveScreen,
     selectedAreaId, setSelectedAreaId,
+    selectedRoad, setSelectedRoad,
     selectedMonthIndex, setSelectedMonthIndex,
     navigateTo
-  }), [activeScreen, selectedAreaId, selectedMonthIndex, navigateTo]);
+  }), [activeScreen, selectedAreaId, selectedRoad, selectedMonthIndex, navigateTo]);
 
   return (
     <AppStateContext.Provider value={value}>

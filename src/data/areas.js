@@ -105,3 +105,146 @@ export function severityColorHex(severity) {
     default: return '#6b7280';
   }
 }
+
+// ---- Road-level contract / tender data (deterministic per road name) ----
+
+const CONTRACTORS = [
+  { name: 'J Kumar Infraprojects Ltd', reg: 'BMC-RD-2019-JKI' },
+  { name: 'IRB Infrastructure Developers', reg: 'BMC-RD-2020-IRB' },
+  { name: 'ITD Cementation India Ltd', reg: 'BMC-RD-2021-ITD' },
+  { name: 'Relcon Infraprojects Ltd', reg: 'BMC-RD-2020-REL' },
+  { name: 'NCC Limited (Nagarjuna)', reg: 'BMC-RD-2022-NCC' },
+  { name: 'Afcons Infrastructure Ltd', reg: 'BMC-RD-2021-AFC' },
+  { name: 'Roadway Solutions India Ltd', reg: 'BMC-RD-2023-RSI' },
+  { name: 'Ashoka Buildcon Ltd', reg: 'BMC-RD-2022-ABL' },
+];
+
+const WORK_TYPES = [
+  'Mastic asphalt relaying',
+  'Bitumen pothole repair (AMC)',
+  'Full-depth concretisation',
+  'Micro-surfacing overlay',
+  'UTWT polymer-modified overlay',
+];
+
+function hash(str) {
+  let h = 0;
+  for (let i = 0; i < str.length; i++) {
+    h = (h * 31 + str.charCodeAt(i)) >>> 0;
+  }
+  return h;
+}
+
+function formatINR(lakhs) {
+  if (lakhs >= 100) {
+    const cr = lakhs / 100;
+    return `₹${cr.toFixed(2)} Cr`;
+  }
+  return `₹${lakhs.toFixed(2)} L`;
+}
+
+function addDays(iso, days) {
+  const d = new Date(iso);
+  d.setDate(d.getDate() + days);
+  return d.toISOString().slice(0, 10);
+}
+
+function formatDate(iso) {
+  const d = new Date(iso);
+  return d.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
+}
+
+function roadScore(areaScore, salt) {
+  const delta = ((salt * 37) % 21) - 10;
+  return Math.max(0, Math.min(100, areaScore + delta));
+}
+
+/**
+ * Returns a deterministic contract/tender record for a given road in an area.
+ * The same area + road name always yields the same record.
+ */
+export function getRoadDetails(areaId, roadName, monthIndex = 11) {
+  const area = AREAS[areaId];
+  if (!area) return null;
+
+  const h = hash(`${areaId}:${roadName}`);
+  const contractor = CONTRACTORS[h % CONTRACTORS.length];
+  const workType = WORK_TYPES[(h >>> 3) % WORK_TYPES.length];
+
+  // Tender amount ₹2.40 Cr to ₹27.60 Cr in lakhs
+  const tenderLakhs = 240 + ((h >>> 5) % 2520);
+  // Contract duration 18–36 months, starting 8–34 months before Apr 2026
+  const durationMonths = 18 + ((h >>> 7) % 19);
+  const startOffsetMonths = 8 + ((h >>> 11) % 26);
+  const startDateIso = addDays('2026-04-01', -startOffsetMonths * 30);
+  const endDateIso = addDays(startDateIso, durationMonths * 30);
+
+  const now = new Date('2026-04-23');
+  const end = new Date(endDateIso);
+  const daysElapsed = Math.round((now - new Date(startDateIso)) / (1000 * 60 * 60 * 24));
+  const daysTotal = durationMonths * 30;
+  const progressPct = Math.min(100, Math.max(0, Math.round((daysElapsed / daysTotal) * 100)));
+  const contractStatus = now > end ? 'Expired' : progressPct > 70 ? 'Late stage' : 'Active';
+
+  const roadIdx = Math.max(0, area.roads.indexOf(roadName));
+  const score = roadScore(area.history[monthIndex] ?? area.score, roadName.length + roadIdx);
+  const severity = scoreToSeverity(score);
+
+  const slaDays = severity === 'Severe' ? 14 : severity === 'Poor' ? 21 : 30;
+  const potholes = severity === 'Severe' ? 6 + (h % 6) : severity === 'Poor' ? 3 + (h % 4) : severity === 'Minor' ? 1 + (h % 3) : 0;
+
+  const tenderId = `BMC/RD/${area.ward.replace(/[^A-Z]/g, '')}/2024-${String((h % 90) + 10).padStart(3, '0')}`;
+
+  return {
+    name: roadName,
+    areaId,
+    areaName: area.name,
+    ward: area.ward,
+
+    score,
+    severity,
+    potholes,
+
+    contractor: contractor.name,
+    contractorReg: contractor.reg,
+    tenderId,
+    tenderAmount: formatINR(tenderLakhs),
+    tenderAmountLakhs: tenderLakhs,
+    workType,
+    contractStart: formatDate(startDateIso),
+    contractEnd: formatDate(endDateIso),
+    contractStatus,
+    progressPct,
+
+    // Accountability
+    responsibleOfficer: area.wardOfficer,
+    responsibleRole: `Executive Engineer (Roads & Traffic), ${area.ward}`,
+    officerEmail: area.wardEmail,
+    officerPhone: area.wardPhone,
+    awardedBy: 'Brihanmumbai Municipal Corporation (BMC)',
+    sanctionAuthority: 'Standing Committee, BMC',
+
+    slaDays,
+
+    // Resolution path
+    resolution: [
+      {
+        title: 'File grievance with BMC',
+        body: `Lodge a public complaint on the BMC 1916 portal or via mail to ${area.wardEmail} citing tender ${tenderId}. SLA is ${slaDays} days for ${severity.toLowerCase()}-severity defects.`,
+      },
+      {
+        title: 'Escalate to Ward Executive Engineer',
+        body: `If unresolved within ${slaDays} days, escalate to ${area.wardOfficer} (${area.ward}) at ${area.wardPhone}. Attach the road-score history and SLA breach record.`,
+      },
+      {
+        title: 'Invoke contract penalty clause',
+        body: `Request BMC Roads Dept. invoke liquidated damages under the ${workType} contract (${tenderId}) — typical LD is 0.5% of tender value per week of delay.`,
+      },
+      {
+        title: 'Escalate beyond ward',
+        body: 'If no action in 60 days, file RTI under Sec 4 RTI Act for SLA records, copy Municipal Commissioner, and approach the Lokayukta or Bombay HC PIL cell.',
+      },
+    ],
+  };
+}
+

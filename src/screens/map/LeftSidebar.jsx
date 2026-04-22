@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react';
 import { AREAS, severityColorHex } from '../../data/areas.js';
 import { useAppState } from '../../context/AppState.jsx';
 import LocationDetail from './LocationDetail.jsx';
+import RoadDetail from './RoadDetail.jsx';
 
 function SearchIcon() {
   return (
@@ -61,7 +62,13 @@ function AreaRow({ id, area, onSelect, monthIndex }) {
 }
 
 export default function LeftSidebar({ onPickArea }) {
-  const { selectedAreaId, setSelectedAreaId, selectedMonthIndex } = useAppState();
+  const {
+    selectedAreaId,
+    setSelectedAreaId,
+    selectedRoad,
+    setSelectedRoad,
+    selectedMonthIndex,
+  } = useAppState();
   const [query, setQuery] = useState('');
 
   const entries = useMemo(() => Object.entries(AREAS), []);
@@ -77,10 +84,13 @@ export default function LeftSidebar({ onPickArea }) {
 
   const handleSelect = (id) => {
     setQuery('');
+    setSelectedRoad(null);
     onPickArea(id);
   };
 
-  const showDetail = Boolean(selectedAreaId);
+  const showRoadDetail = Boolean(selectedRoad);
+  const showLocationDetail = !showRoadDetail && Boolean(selectedAreaId);
+  const showList = !showRoadDetail && !showLocationDetail;
 
   return (
     <aside
@@ -167,7 +177,12 @@ export default function LeftSidebar({ onPickArea }) {
       </div>
 
       <div style={{ flex: 1, minHeight: 0, overflowY: 'auto' }}>
-        {showDetail ? (
+        {showRoadDetail ? (
+          <RoadDetail
+            selection={selectedRoad}
+            onBack={() => setSelectedRoad(null)}
+          />
+        ) : showLocationDetail ? (
           <LocationDetail
             areaId={selectedAreaId}
             onBack={() => setSelectedAreaId(null)}
