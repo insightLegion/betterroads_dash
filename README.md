@@ -43,3 +43,4 @@ After the first deploy, replace the placeholder URL below.
 - `recharts` for the 12-month history chart
 - No routing library — a React context switches between screens
 - No UI framework — all visual styling lives in `src/styles/tokens.css` and inline styles. Font weights are 400 / 500 only; no gradients; shadows reserved for floating cards.
+
