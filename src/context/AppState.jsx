@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useCallback, useMemo } from 'react';
+import { createContext, useContext, useState, useCallback, useMemo, useEffect } from 'react';
 
 const AppStateContext = createContext(null);
 
@@ -6,14 +6,32 @@ const AppStateContext = createContext(null);
 const DEFAULT_MONTH_INDEX = 11;
 
 export function AppStateProvider({ children }) {
-  const [activeScreen, setActiveScreen] = useState('map');
+  const getInitialScreen = () => {
+    const hash = window.location.hash.replace('#', '');
+    if (['login', 'profile', 'complaint', 'map'].includes(hash)) return hash;
+    return 'map';
+  };
+
+  const [activeScreen, setActiveScreen] = useState(getInitialScreen);
   const [selectedAreaId, setSelectedAreaId] = useState(null);
-  const [selectedRoad, setSelectedRoad] = useState(null); // { areaId, roadName } | null
+  const [selectedRoad, setSelectedRoad] = useState(null);
   const [selectedMonthIndex, setSelectedMonthIndex] = useState(DEFAULT_MONTH_INDEX);
 
   const navigateTo = useCallback((screen, areaId) => {
     setActiveScreen(screen);
+    window.location.hash = `#${screen}`;
     if (areaId !== undefined) setSelectedAreaId(areaId);
+  }, []);
+
+  useEffect(() => {
+    const handleHash = () => {
+      const h = window.location.hash.replace('#', '');
+      if (['login', 'profile', 'complaint', 'map'].includes(h)) {
+        setActiveScreen(h);
+      }
+    };
+    window.addEventListener('hashchange', handleHash);
+    return () => window.removeEventListener('hashchange', handleHash);
   }, []);
 
   const value = useMemo(() => ({

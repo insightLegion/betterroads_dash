@@ -9,7 +9,7 @@ export default function MapStyleChips({ layer, setLayer }) {
     <div
       style={{
         position: 'absolute',
-        left: 16,
+        left: 392,
         top: 64,
         zIndex: 500,
         display: 'flex',

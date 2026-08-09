@@ -125,13 +125,14 @@ export default function Step1({ state, setState, onNext }) {
             return (
               <button
                 key={ev.id}
+                type="button"
                 onClick={() => toggleEvidence(ev.id)}
                 style={{
                   position: 'relative',
                   padding: 12,
                   borderRadius: 'var(--radius-sm)',
-                  border: sel ? '0.5px solid var(--accent)' : 'var(--border-strong)',
-                  background: sel ? 'rgba(29, 158, 117, 0.08)' : 'var(--surface)',
+                  border: sel ? '1px solid var(--accent)' : 'var(--border-strong)',
+                  background: sel ? 'var(--accent-soft)' : 'var(--surface)',
                   textAlign: 'left',
                   cursor: 'pointer',
                   transition: 'all var(--ease)',
@@ -147,13 +148,64 @@ export default function Step1({ state, setState, onNext }) {
                     <Check />
                   </span>
                 )}
-                <div style={{ fontSize: 12, fontWeight: 500, marginBottom: 4 }}>{ev.label}</div>
+                <div style={{ fontSize: 12, fontWeight: 600, marginBottom: 4 }}>{ev.label}</div>
                 <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>{ev.desc}</div>
               </button>
             );
           })}
         </div>
       </Field>
+
+      {state.evidence.includes('photo') && (
+        <div
+          style={{
+            marginTop: 14,
+            padding: 16,
+            borderRadius: 'var(--radius-md)',
+            border: '2px dashed var(--accent)',
+            background: 'var(--accent-tint)',
+            textAlign: 'center',
+          }}
+        >
+          <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--text)', marginBottom: 4 }}>
+            Upload Photo Evidence <span style={{ color: 'var(--accent)' }}>(Optional but recommended)</span>
+          </div>
+          <div style={{ fontSize: 11, color: 'var(--text-muted)', marginBottom: 12 }}>
+            Attach photos of potholes, cracked road surfaces, or waterlogging
+          </div>
+          <label
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: 6,
+              padding: '8px 16px',
+              borderRadius: 'var(--radius-pill)',
+              background: 'var(--accent)',
+              color: '#ffffff',
+              fontSize: 12,
+              fontWeight: 700,
+              cursor: 'pointer',
+            }}
+          >
+            📷 Choose Photos
+            <input
+              type="file"
+              accept="image/*"
+              multiple
+              onChange={(e) => {
+                const files = Array.from(e.target.files || []).map((f) => f.name);
+                setState((s) => ({ ...s, photoFiles: files }));
+              }}
+              style={{ display: 'none' }}
+            />
+          </label>
+          {state.photoFiles && state.photoFiles.length > 0 && (
+            <div style={{ marginTop: 10, fontSize: 11, color: '#22c55e', fontWeight: 600 }}>
+              ✓ {state.photoFiles.length} photo(s) selected: {state.photoFiles.join(', ')}
+            </div>
+          )}
+        </div>
+      )}
 
       <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 24 }}>
         <button

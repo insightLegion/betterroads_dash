@@ -2,10 +2,18 @@ import { AppStateProvider, useAppState } from './context/AppState.jsx';
 import Navbar from './components/Navbar.jsx';
 import MapView from './screens/MapView.jsx';
 import ComplaintView from './screens/ComplaintView.jsx';
+import ProfileView from './screens/ProfileView.jsx';
+
+import { AuthComponent } from './components/ui/sign-up.jsx';
 
 function Shell() {
   const { activeScreen } = useAppState();
   const isMap = activeScreen === 'map';
+  const isLogin = activeScreen === 'login';
+
+  if (isLogin) {
+    return <AuthComponent brandName="BetterRoads" />;
+  }
 
   return (
     <div
@@ -16,7 +24,7 @@ function Shell() {
         background: 'var(--surface-2)',
       }}
     >
-      {!isMap && <Navbar />}
+      {!isMap && activeScreen !== 'profile' && <Navbar />}
       <main
         key={activeScreen}
         className="screen-fade"
@@ -24,6 +32,7 @@ function Shell() {
       >
         {activeScreen === 'map' && <MapView />}
         {activeScreen === 'complaint' && <ComplaintView />}
+        {activeScreen === 'profile' && <ProfileView />}
       </main>
     </div>
   );

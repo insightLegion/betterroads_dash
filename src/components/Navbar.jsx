@@ -136,20 +136,38 @@ export default function Navbar({ variant = 'default' }) {
           >
             Get the app <span style={{ fontSize: 14 }}>→</span>
           </a>
-          <div
-            title="User Account"
+          <button
+            onClick={() => navigateTo('login')}
             style={{
-              width: 28,
-              height: 28,
+              fontSize: 12,
+              fontWeight: 600,
+              color: 'var(--text)',
+              padding: '6px 12px',
+              borderRadius: 'var(--radius-pill)',
+              border: '1px solid #e7e5e2',
+              background: '#ffffff',
+              cursor: 'pointer',
+            }}
+          >
+            Sign in
+          </button>
+          <div
+            title="User Profile (MK)"
+            onClick={() => navigateTo('profile')}
+            style={{
+              width: 32,
+              height: 32,
               borderRadius: '50%',
-              background: '#0a0a0a',
+              background: 'linear-gradient(135deg, #e0611c 0%, #0a0a0a 100%)',
               color: '#fff',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              fontSize: 11,
-              fontWeight: 700,
+              fontSize: 12,
+              fontWeight: 800,
               cursor: 'pointer',
+              boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
+              transition: 'transform 150ms ease',
             }}
           >
             MK
@@ -207,9 +225,27 @@ export default function Navbar({ variant = 'default' }) {
         <button style={linkStyle(activeScreen === 'complaint')} onClick={() => navigateTo('complaint')}>
           File complaint
         </button>
+        <button style={linkStyle(activeScreen === 'profile')} onClick={() => navigateTo('profile')}>
+          Profile
+        </button>
       </div>
 
       <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+        <button
+          onClick={() => navigateTo('login')}
+          style={{
+            background: 'transparent',
+            color: 'var(--text)',
+            fontSize: 12,
+            fontWeight: 600,
+            padding: '6px 12px',
+            borderRadius: 'var(--radius-pill)',
+            border: '1px solid #e7e5e2',
+            cursor: 'pointer',
+          }}
+        >
+          Sign in
+        </button>
         <span
           style={{
             background: 'var(--surface-2)',
@@ -231,6 +267,7 @@ export default function Navbar({ variant = 'default' }) {
             fontSize: 12,
             padding: '8px 16px',
             borderRadius: 'var(--radius-pill)',
+            cursor: 'pointer',
           }}
         >
           Report issue

@@ -1,14 +1,33 @@
 import { useCallback, useEffect, useRef } from 'react';
+import gsap from 'gsap';
+import { useGSAP } from '@gsap/react';
 import { useAppState } from '../../context/AppState.jsx';
 import { AREAS } from '../../data/areas.js';
 
-const LABELS = AREAS['andheri-west'].historyLabels; // all areas share the same 12 labels
+gsap.registerPlugin(useGSAP);
+
+const LABELS = AREAS['andheri-west'].historyLabels; // 12 labels (Apr 25 -> Apr 26)
 const LAST_INDEX = LABELS.length - 1;
 
 export default function TemporalScrubber() {
   const { selectedMonthIndex, setSelectedMonthIndex } = useAppState();
   const trackRef = useRef(null);
+  const badgeRef = useRef(null);
   const draggingRef = useRef(false);
+
+  // GSAP animation on month index change
+  useGSAP(
+    () => {
+      if (badgeRef.current) {
+        gsap.fromTo(
+          badgeRef.current,
+          { scale: 0.85, opacity: 0.6 },
+          { scale: 1, opacity: 1, duration: 0.25, ease: 'back.out(1.7)' }
+        );
+      }
+    },
+    { dependencies: [selectedMonthIndex] }
+  );
 
   const positionToIndex = useCallback((clientX) => {
     const el = trackRef.current;
@@ -51,88 +70,133 @@ export default function TemporalScrubber() {
         left: '50%',
         transform: 'translateX(-50%)',
         bottom: 20,
-        width: 'min(720px, calc(100% - 200px))',
-        borderRadius: 20,
-        padding: '14px 20px 16px',
+        width: 'min(680px, calc(100% - 160px))',
+        borderRadius: 24,
+        padding: '12px 24px 14px',
         zIndex: 500,
-        boxShadow: '0 12px 32px -8px rgba(10, 10, 10, 0.15)',
+        boxShadow: '0 16px 36px -10px rgba(10, 10, 10, 0.16)',
+        display: 'flex',
+        flexDirection: 'column',
+        gap: 8,
       }}
     >
+      {/* Scrubber Top Bar */}
       <div
         style={{
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
-          marginBottom: 10,
         }}
       >
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="1.6">
-            <circle cx="12" cy="12" r="9" />
-            <path d="M12 7v5l3 2" strokeLinecap="round" />
-          </svg>
-          <span style={{ fontSize: 12, color: 'var(--text-muted)', fontWeight: 500 }}>
-            Historical view
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+          <div
+            style={{
+              width: 8,
+              height: 8,
+              borderRadius: '50%',
+              background: 'var(--accent)',
+              boxShadow: '0 0 8px var(--accent)',
+            }}
+          />
+          <span
+            className="font-display"
+            style={{
+              fontSize: 11,
+              fontWeight: 800,
+              color: '#0a0a0a',
+              textTransform: 'uppercase',
+              letterSpacing: '0.08em',
+            }}
+          >
+            HISTORICAL TIMELINE
           </span>
           <span
+            ref={badgeRef}
             className="mono"
             style={{
               fontSize: 12,
-              fontWeight: 500,
-              color: 'var(--text)',
-              background: 'var(--accent-tint)',
-              padding: '2px 8px',
+              fontWeight: 800,
+              color: '#ffffff',
+              background: '#0a0a0a',
+              padding: '3px 10px',
               borderRadius: 'var(--radius-pill)',
+              letterSpacing: '0.02em',
             }}
           >
             {label}
           </span>
         </div>
-        {!isLatest && (
+
+        {!isLatest ? (
           <button
             onClick={() => setSelectedMonthIndex(LAST_INDEX)}
-            style={{ fontSize: 11, color: 'var(--accent)', fontWeight: 500 }}
+            style={{
+              fontSize: 11,
+              fontWeight: 700,
+              color: 'var(--accent)',
+              background: 'var(--accent-soft)',
+              padding: '4px 12px',
+              borderRadius: 'var(--radius-pill)',
+              border: 'none',
+              cursor: 'pointer',
+              transition: 'transform 150ms ease',
+            }}
           >
-            Jump to current
+            Jump to current →
           </button>
+        ) : (
+          <span
+            style={{
+              fontSize: 10,
+              fontWeight: 700,
+              color: 'var(--text-muted)',
+              textTransform: 'uppercase',
+              letterSpacing: '0.06em',
+            }}
+          >
+            Latest Data
+          </span>
         )}
       </div>
 
+      {/* Track & Slider */}
       <div
         ref={trackRef}
         onPointerDown={handleDown}
         style={{
           position: 'relative',
-          height: 28,
+          height: 24,
           cursor: 'pointer',
           touchAction: 'none',
+          display: 'flex',
+          alignItems: 'center',
         }}
       >
-        {/* track */}
+        {/* Base Track */}
         <div
           style={{
             position: 'absolute',
-            top: 13,
             left: 0,
             right: 0,
-            height: 2,
-            background: 'rgba(0,0,0,0.08)',
-            borderRadius: 1,
+            height: 5,
+            background: '#e7e5e2',
+            borderRadius: 3,
           }}
         />
-        {/* filled track */}
+
+        {/* Active Fill Track */}
         <div
           style={{
             position: 'absolute',
-            top: 13,
             left: 0,
             width: `${pct}%`,
-            height: 2,
-            background: 'var(--accent)',
-            borderRadius: 1,
+            height: 5,
+            background: 'linear-gradient(90deg, #e0611c 0%, #f97316 100%)',
+            borderRadius: 3,
           }}
         />
-        {/* ticks */}
+
+        {/* Month Ticks */}
         {LABELS.map((lbl, i) => {
           const p = (i / LAST_INDEX) * 100;
           const active = i === selectedMonthIndex;
@@ -141,46 +205,49 @@ export default function TemporalScrubber() {
               key={lbl}
               style={{
                 position: 'absolute',
-                top: 10,
                 left: `${p}%`,
                 transform: 'translateX(-50%)',
-                width: active ? 3 : 1,
-                height: 8,
-                background: active ? 'var(--accent)' : 'rgba(0,0,0,0.25)',
+                width: active ? 4 : 2,
+                height: active ? 10 : 6,
+                background: active ? 'var(--accent)' : '#a8a29e',
                 borderRadius: 1,
                 pointerEvents: 'none',
               }}
             />
           );
         })}
-        {/* handle */}
+
+        {/* Handle */}
         <div
           style={{
             position: 'absolute',
-            top: 7,
             left: `${pct}%`,
             transform: 'translate(-50%, 0)',
-            width: 14,
-            height: 14,
+            width: 18,
+            height: 18,
             borderRadius: '50%',
-            background: '#fff',
-            border: '2px solid var(--accent)',
-            boxShadow: 'var(--shadow-float)',
+            background: '#ffffff',
+            border: '3px solid var(--accent)',
+            boxShadow: '0 2px 10px rgba(224, 97, 28, 0.4)',
             pointerEvents: 'none',
+            transition: 'transform 100ms ease',
           }}
         />
       </div>
 
+      {/* Bottom Labels */}
       <div
         style={{
           display: 'flex',
           justifyContent: 'space-between',
           fontSize: 10,
+          fontWeight: 600,
           color: 'var(--text-muted)',
-          marginTop: 4,
+          padding: '0 2px',
         }}
       >
         <span>{LABELS[0]}</span>
+        <span>{LABELS[Math.floor(LAST_INDEX / 2)]}</span>
         <span>{LABELS[LAST_INDEX]}</span>
       </div>
     </div>

@@ -8,7 +8,7 @@ import TemporalScrubber from './map/TemporalScrubber.jsx';
 import ZoomControl from './map/ZoomControl.jsx';
 import MapStyleChips from './map/MapStyleChips.jsx';
 import WardPolygons from './map/WardPolygons.jsx';
-import RoadSegments from './map/RoadSegments.jsx';
+import DynamicOsmRoads from './map/DynamicOsmRoads.jsx';
 
 function FlyController({ target }) {
   const map = useMap();
@@ -64,8 +64,8 @@ export default function MapView() {
         <MapContainer
           center={[19.076, 72.8777]}
           zoom={11}
-          minZoom={10}
-          maxZoom={17}
+          minZoom={4}
+          maxZoom={18}
           style={{ height: '100%', width: '100%' }}
           zoomControl={false}
         >
@@ -82,7 +82,7 @@ export default function MapView() {
           )}
 
           {showRoadLines && (
-            <RoadSegments
+            <DynamicOsmRoads
               monthIndex={selectedMonthIndex}
               zoom={zoom}
               layer={layer}

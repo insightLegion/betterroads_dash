@@ -8,7 +8,7 @@ const CHANNELS = [
   { id: 'email', label: 'Email', desc: 'Direct to ward officer' },
   { id: 'bmc', label: 'BMC portal', desc: 'mcgm.gov.in' },
   { id: 'rti', label: 'RTI filing', desc: 'Maharashtra RTI' },
-  { id: 'social', label: 'Social + tag', desc: 'Public disclosure' },
+  { id: 'social', label: 'X post / Socials tag', desc: 'Public tag @BMC & PWD' },
 ];
 
 function Field({ label, children }) {
