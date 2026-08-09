@@ -45,18 +45,17 @@ export default function TemporalScrubber() {
 
   return (
     <div
+      className="glass-panel"
       style={{
         position: 'absolute',
         left: '50%',
         transform: 'translateX(-50%)',
         bottom: 20,
         width: 'min(720px, calc(100% - 200px))',
-        background: 'var(--surface)',
-        borderRadius: 'var(--radius-lg)',
-        boxShadow: 'var(--shadow-pop)',
-        border: 'var(--border)',
+        borderRadius: 20,
         padding: '14px 20px 16px',
         zIndex: 500,
+        boxShadow: '0 12px 32px -8px rgba(10, 10, 10, 0.15)',
       }}
     >
       <div

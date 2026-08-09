@@ -97,6 +97,7 @@ export default function LeftSidebar({ onPickArea }) {
       style={{
         width: 'var(--sidebar-w)',
         height: '100%',
+        paddingTop: 48,
         background: 'var(--surface)',
         borderRight: 'var(--border)',
         boxShadow: 'var(--shadow-pop)',
@@ -119,23 +120,31 @@ export default function LeftSidebar({ onPickArea }) {
         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
           <div
             style={{
-              width: 28,
-              height: 28,
+              width: 32,
+              height: 32,
               borderRadius: 'var(--radius-sm)',
               background: 'var(--accent)',
               color: '#fff',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              fontSize: 13,
-              fontWeight: 500,
+              fontSize: 14,
+              fontWeight: 800,
+              fontFamily: 'var(--font-display)',
             }}
           >
             BR
           </div>
           <div>
-            <div style={{ fontSize: 14, fontWeight: 500, color: 'var(--text)' }}>Better Roads</div>
-            <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>Mumbai · BMC wards</div>
+            <div
+              className="font-display"
+              style={{ fontSize: 16, fontWeight: 800, color: '#0a0a0a', letterSpacing: '-0.02em' }}
+            >
+              betterroads<span style={{ color: 'var(--accent)' }}>.</span>
+            </div>
+            <div style={{ fontSize: 10, fontWeight: 700, color: 'var(--text-caption)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+              Mumbai · BMC Wards
+            </div>
           </div>
         </div>
 
