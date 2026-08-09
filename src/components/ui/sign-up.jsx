@@ -1,704 +1,305 @@
-import React, {
-  useState,
-  useRef,
-  useEffect,
-  forwardRef,
-  useImperativeHandle,
-  useMemo,
-  useCallback,
-  createContext,
-  Children,
-} from 'react';
-import { cn } from '../../lib/utils';
-import { cva } from 'class-variance-authority';
-import {
-  ArrowRight,
-  Mail,
-  Gem,
-  Lock,
-  Eye,
-  EyeOff,
-  ArrowLeft,
-  X,
-  AlertCircle,
-  PartyPopper,
-  Loader,
-} from 'lucide-react';
-import { AnimatePresence, motion, useInView } from 'framer-motion';
-import confetti from 'canvas-confetti';
+import React, { useState, useRef } from 'react';
+import { GrainGradient } from '@paper-design/shaders-react';
+import gsap from 'gsap';
+import { useGSAP } from '@gsap/react';
 
-const ConfettiContext = createContext({});
+gsap.registerPlugin(useGSAP);
 
-const Confetti = forwardRef((props, ref) => {
-  const {
-    options,
-    globalOptions = { resize: true, useWorker: true },
-    manualstart = false,
-    ...rest
-  } = props;
-  const instanceRef = useRef(null);
+const formFields = [
+  { label: 'First Name', value: 'Harshit', type: 'text' },
+  { label: 'Last Name', value: 'Sharma', type: 'text' },
+];
 
-  const canvasRef = useCallback(
-    (node) => {
-      if (node !== null) {
-        if (instanceRef.current) return;
-        instanceRef.current = confetti.create(node, {
-          ...globalOptions,
-          resize: true,
-        });
-      } else {
-        if (instanceRef.current) {
-          instanceRef.current.reset();
-          instanceRef.current = null;
-        }
-      }
-    },
-    [globalOptions]
-  );
-
-  const fire = useCallback(
-    (opts = {}) => instanceRef.current?.({ ...options, ...opts }),
-    [options]
-  );
-
-  const api = useMemo(() => ({ fire }), [fire]);
-  useImperativeHandle(ref, () => api, [api]);
-
-  useEffect(() => {
-    if (!manualstart) fire();
-  }, [manualstart, fire]);
-
-  return <canvas ref={canvasRef} {...rest} />;
-});
-Confetti.displayName = 'Confetti';
-
-export function TextLoop({
-  children,
-  className,
-  interval = 2,
-  transition = { duration: 0.3 },
-  variants,
-  onIndexChange,
-  stopOnEnd = false,
-}) {
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const items = Children.toArray(children);
-
-  useEffect(() => {
-    const intervalMs = interval * 1000;
-    const timer = setInterval(() => {
-      setCurrentIndex((current) => {
-        if (stopOnEnd && current === items.length - 1) {
-          clearInterval(timer);
-          return current;
-        }
-        const next = (current + 1) % items.length;
-        onIndexChange?.(next);
-        return next;
-      });
-    }, intervalMs);
-    return () => clearInterval(timer);
-  }, [items.length, interval, onIndexChange, stopOnEnd]);
-
-  const motionVariants = {
-    initial: { y: 20, opacity: 0 },
-    animate: { y: 0, opacity: 1 },
-    exit: { y: -20, opacity: 0 },
-  };
-
-  return (
-    <div className={cn('relative inline-block whitespace-nowrap', className)}>
-      <AnimatePresence mode="popLayout" initial={false}>
-        <motion.div
-          key={currentIndex}
-          initial="initial"
-          animate="animate"
-          exit="exit"
-          transition={transition}
-          variants={variants || motionVariants}
-        >
-          {items[currentIndex]}
-        </motion.div>
-      </AnimatePresence>
-    </div>
-  );
-}
-
-function BlurFade({
-  children,
-  className,
-  variant,
-  duration = 0.4,
-  delay = 0,
-  yOffset = 6,
-  inView = true,
-  inViewMargin = '-50px',
-  blur = '6px',
-}) {
-  const ref = useRef(null);
-  const inViewResult = useInView(ref, { once: true, margin: inViewMargin });
-  const isInView = !inView || inViewResult;
-
-  const defaultVariants = {
-    hidden: { y: yOffset, opacity: 0, filter: `blur(${blur})` },
-    visible: { y: -yOffset, opacity: 1, filter: `blur(0px)` },
-  };
-  const combinedVariants = variant || defaultVariants;
-
-  return (
-    <motion.div
-      ref={ref}
-      initial="hidden"
-      animate={isInView ? 'visible' : 'hidden'}
-      exit="hidden"
-      variants={combinedVariants}
-      transition={{ delay: 0.04 + delay, duration, ease: 'easeOut' }}
-      className={className}
-    >
-      {children}
-    </motion.div>
-  );
-}
-
-const glassButtonVariants = cva(
-  'relative isolate all-unset cursor-pointer rounded-full transition-all',
-  {
-    variants: {
-      size: {
-        default: 'text-base font-medium',
-        sm: 'text-sm font-medium',
-        lg: 'text-lg font-medium',
-        icon: 'h-10 w-10',
-      },
-    },
-    defaultVariants: { size: 'default' },
-  }
-);
-
-const glassButtonTextVariants = cva(
-  'glass-button-text relative block select-none tracking-tighter',
-  {
-    variants: {
-      size: {
-        default: 'px-6 py-3.5',
-        sm: 'px-4 py-2',
-        lg: 'px-8 py-4',
-        icon: 'flex h-10 w-10 items-center justify-center',
-      },
-    },
-    defaultVariants: { size: 'default' },
-  }
-);
-
-const GlassButton = forwardRef(
-  ({ className, children, size, contentClassName, onClick, ...props }, ref) => {
-    const handleWrapperClick = (e) => {
-      const button = e.currentTarget.querySelector('button');
-      if (button && e.target !== button) button.click();
-    };
-    return (
-      <div
-        className={cn('glass-button-wrap cursor-pointer rounded-full relative', className)}
-        onClick={handleWrapperClick}
-      >
-        <button
-          className={cn('glass-button relative z-10', glassButtonVariants({ size }))}
-          ref={ref}
-          onClick={onClick}
-          {...props}
-        >
-          <span className={cn(glassButtonTextVariants({ size }), contentClassName)}>
-            {children}
-          </span>
-        </button>
-        <div className="glass-button-shadow rounded-full pointer-events-none"></div>
-      </div>
-    );
-  }
-);
-GlassButton.displayName = 'GlassButton';
-
-const GradientBackground = () => (
+const termsText = (
   <>
-    <style>{` @keyframes float1 { 0% { transform: translate(0, 0); } 50% { transform: translate(-10px, 10px); } 100% { transform: translate(0, 0); } } @keyframes float2 { 0% { transform: translate(0, 0); } 50% { transform: translate(10px, -10px); } 100% { transform: translate(0, 0); } } `}</style>
-    <svg
-      width="100%"
-      height="100%"
-      viewBox="0 0 800 600"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      preserveAspectRatio="xMidYMid slice"
-      className="absolute top-0 left-0 w-full h-full"
+    By creating an account, you agree to our{' '}
+    <a
+      href="#terms"
+      onClick={(e) => e.preventDefault()}
+      className="font-medium text-black/45 underline underline-offset-2 dark:text-white/45"
     >
-      <defs>
-        <linearGradient id="rev_grad1" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" style={{ stopColor: 'var(--accent)', stopOpacity: 0.8 }} />
-          <stop offset="100%" style={{ stopColor: '#f97316', stopOpacity: 0.6 }} />
-        </linearGradient>
-        <linearGradient id="rev_grad2" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" style={{ stopColor: '#eab308', stopOpacity: 0.9 }} />
-          <stop offset="50%" style={{ stopColor: '#faeadd', stopOpacity: 0.7 }} />
-          <stop offset="100%" style={{ stopColor: 'var(--accent)', stopOpacity: 0.6 }} />
-        </linearGradient>
-        <radialGradient id="rev_grad3" cx="50%" cy="50%" r="50%">
-          <stop offset="0%" style={{ stopColor: '#ef4444', stopOpacity: 0.8 }} />
-          <stop offset="100%" style={{ stopColor: '#0a0a0a', stopOpacity: 0.4 }} />
-        </radialGradient>
-        <filter id="rev_blur1" x="-50%" y="-50%" width="200%" height="200%">
-          <feGaussianBlur stdDeviation="35" />
-        </filter>
-        <filter id="rev_blur2" x="-50%" y="-50%" width="200%" height="200%">
-          <feGaussianBlur stdDeviation="25" />
-        </filter>
-        <filter id="rev_blur3" x="-50%" y="-50%" width="200%" height="200%">
-          <feGaussianBlur stdDeviation="45" />
-        </filter>
-      </defs>
-      <g style={{ animation: 'float1 20s ease-in-out infinite' }}>
-        <ellipse
-          cx="200"
-          cy="500"
-          rx="250"
-          ry="180"
-          fill="url(#rev_grad1)"
-          filter="url(#rev_blur1)"
-          transform="rotate(-30 200 500)"
-        />
-        <rect
-          x="500"
-          y="100"
-          width="300"
-          height="250"
-          rx="80"
-          fill="url(#rev_grad2)"
-          filter="url(#rev_blur2)"
-          transform="rotate(15 650 225)"
-        />
-      </g>
-      <g style={{ animation: 'float2 25s ease-in-out infinite' }}>
-        <circle
-          cx="650"
-          cy="450"
-          r="150"
-          fill="url(#rev_grad3)"
-          filter="url(#rev_blur3)"
-          opacity="0.7"
-        />
-        <ellipse
-          cx="50"
-          cy="150"
-          rx="180"
-          ry="120"
-          fill="var(--accent-soft)"
-          filter="url(#rev_blur2)"
-          opacity="0.8"
-        />
-      </g>
-    </svg>
+      Terms and Services
+    </a>{' '}
+    and{' '}
+    <a
+      href="#privacy"
+      onClick={(e) => e.preventDefault()}
+      className="font-medium text-black/45 underline underline-offset-2 dark:text-white/45"
+    >
+      Privacy Policy
+    </a>
   </>
 );
 
-const GoogleIcon = (props) => (
-  <svg {...props} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" className="w-5 h-5">
-    <g fillRule="evenodd" fill="none">
-      <g fillRule="nonzero" transform="translate(3, 2)">
-        <path
-          fill="#4285F4"
-          d="M57.8123233,30.1515267 C57.8123233,27.7263183 57.6155321,25.9565533 57.1896408,24.1212666 L29.4960833,24.1212666 L29.4960833,35.0674653 L45.7515771,35.0674653 C45.4239683,37.7877475 43.6542033,41.8844383 39.7213169,44.6372555 L39.6661883,45.0037254 L48.4223791,51.7870338 L49.0290201,51.8475849 C54.6004021,46.7020943 57.8123233,39.1313952 57.8123233,30.1515267"
-        ></path>
-        <path
-          fill="#34A853"
-          d="M29.4960833,58.9921667 C37.4599129,58.9921667 44.1456164,56.3701671 49.0290201,51.8475849 L39.7213169,44.6372555 C37.2305867,46.3742596 33.887622,47.5868638 29.4960833,47.5868638 C21.6960582,47.5868638 15.0758763,42.4415991 12.7159637,35.3297782 L12.3700541,35.3591501 L3.26524241,42.4054492 L3.14617358,42.736447 C7.9965904,52.3717589 17.959737,58.9921667 29.4960833,58.9921667"
-        ></path>
-        <path
-          fill="#FBBC05"
-          d="M12.7159637,35.3297782 C12.0932812,33.4944915 11.7329116,31.5279353 11.7329116,29.4960833 C11.7329116,27.4640054 12.0932812,25.4976752 12.6832029,23.6623884 L12.6667095,23.2715173 L3.44779955,16.1120237 L3.14617358,16.2554937 C1.14708246,20.2539019 0,24.7439491 0,29.4960833 C0,34.2482175 1.14708246,38.7380388 3.14617358,42.736447 L12.7159637,35.3297782"
-        ></path>
-        <path
-          fill="#EB4335"
-          d="M29.4960833,11.4050769 C35.0347044,11.4050769 38.7707997,13.7975244 40.9011602,15.7968415 L49.2255853,7.66898166 C44.1130815,2.91684746 37.4599129,0 29.4960833,0 C17.959737,0 7.9965904,6.62018183 3.14617358,16.2554937 L12.6832029,23.6623884 C15.0758763,16.5505675 21.6960582,11.4050769 29.4960833,11.4050769"
-        ></path>
-      </g>
-    </g>
-  </svg>
-);
+export function AuthComponent() {
+  const containerRef = useRef(null);
 
-const GitHubIcon = (props) => (
-  <svg {...props} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" className="w-5 h-5">
-    <path
-      fill="currentColor"
-      d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"
-    />
-  </svg>
-);
-
-const modalSteps = [
-  { message: 'Signing you up...', icon: <Loader className="w-10 h-10 text-primary animate-spin" /> },
-  { message: 'Onboarding you...', icon: <Loader className="w-10 h-10 text-primary animate-spin" /> },
-  { message: 'Finalizing...', icon: <Loader className="w-10 h-10 text-primary animate-spin" /> },
-  { message: 'Welcome Aboard!', icon: <PartyPopper className="w-10 h-10 text-green-500" /> },
-];
-const TEXT_LOOP_INTERVAL = 1.5;
-
-const DefaultLogo = () => (
-  <div className="bg-primary text-primary-foreground rounded-md p-1.5">
-    <Gem className="h-4 w-4" />
-  </div>
-);
-
-export function AuthComponent({ logo = <DefaultLogo />, brandName = 'BetterRoads' }) {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [authStep, setAuthStep] = useState('email');
-  const [modalStatus, setModalStatus] = useState('closed');
-  const [modalErrorMessage, setModalErrorMessage] = useState('');
-  const confettiRef = useRef(null);
-
-  const isEmailValid = /\S+@\S+\.\S+/.test(email);
-  const isPasswordValid = password.length >= 6;
-  const isConfirmPasswordValid = confirmPassword.length >= 6;
-
-  const passwordInputRef = useRef(null);
-  const confirmPasswordInputRef = useRef(null);
-
-  const fireSideCanons = () => {
-    const fire = confettiRef.current?.fire;
-    if (fire) {
-      const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 100 };
-      const particleCount = 50;
-      fire({ ...defaults, particleCount, origin: { x: 0, y: 1 }, angle: 60 });
-      fire({ ...defaults, particleCount, origin: { x: 1, y: 1 }, angle: 120 });
-    }
-  };
-
-  const handleFinalSubmit = (e) => {
-    e.preventDefault();
-    if (modalStatus !== 'closed' || authStep !== 'confirmPassword') return;
-
-    if (password !== confirmPassword) {
-      setModalErrorMessage('Passwords do not match!');
-      setModalStatus('error');
-    } else {
-      setModalStatus('loading');
-      const loadingStepsCount = modalSteps.length - 1;
-      const totalDuration = loadingStepsCount * TEXT_LOOP_INTERVAL * 1000;
-      setTimeout(() => {
-        fireSideCanons();
-        setModalStatus('success');
-      }, totalDuration);
-    }
-  };
-
-  const handleProgressStep = () => {
-    if (authStep === 'email') {
-      if (isEmailValid) setAuthStep('password');
-    } else if (authStep === 'password') {
-      if (isPasswordValid) setAuthStep('confirmPassword');
-    }
-  };
-
-  const handleKeyDown = (e) => {
-    if (e.key === 'Enter') {
-      e.preventDefault();
-      handleProgressStep();
-    }
-  };
-
-  const handleGoBack = () => {
-    if (authStep === 'confirmPassword') {
-      setAuthStep('password');
-      setConfirmPassword('');
-    } else if (authStep === 'password') setAuthStep('email');
-  };
-
-  const closeModal = () => {
-    setModalStatus('closed');
-    setModalErrorMessage('');
-  };
-
-  useEffect(() => {
-    if (authStep === 'password') setTimeout(() => passwordInputRef.current?.focus(), 500);
-    else if (authStep === 'confirmPassword')
-      setTimeout(() => confirmPasswordInputRef.current?.focus(), 500);
-  }, [authStep]);
-
-  useEffect(() => {
-    if (modalStatus === 'success') {
-      fireSideCanons();
-    }
-  }, [modalStatus]);
-
-  const Modal = () => (
-    <AnimatePresence>
-      {modalStatus !== 'closed' && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm"
-        >
-          <motion.div
-            initial={{ scale: 0.9, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            exit={{ scale: 0.9, opacity: 0 }}
-            className="relative bg-white border-2 border-slate-200 rounded-2xl p-8 w-full max-w-sm flex flex-col items-center gap-4 mx-2 shadow-2xl"
-          >
-            {(modalStatus === 'error' || modalStatus === 'success') && (
-              <button
-                onClick={closeModal}
-                className="absolute top-3 right-3 p-1 text-slate-400 hover:text-slate-700 transition-colors"
-              >
-                <X className="w-5 h-5" />
-              </button>
-            )}
-            {modalStatus === 'error' && (
-              <>
-                <AlertCircle className="w-12 h-12 text-red-500" />
-                <p className="text-base font-semibold text-slate-900">{modalErrorMessage}</p>
-                <button
-                  onClick={closeModal}
-                  className="mt-4 px-4 py-2 bg-slate-900 text-white font-medium rounded-full text-sm"
-                >
-                  Try Again
-                </button>
-              </>
-            )}
-            {modalStatus === 'loading' && (
-              <TextLoop interval={TEXT_LOOP_INTERVAL} stopOnEnd={true}>
-                {modalSteps.slice(0, -1).map((step, i) => (
-                  <div key={i} className="flex flex-col items-center gap-4">
-                    {step.icon}
-                    <p className="text-base font-semibold text-slate-900">{step.message}</p>
-                  </div>
-                ))}
-              </TextLoop>
-            )}
-            {modalStatus === 'success' && (
-              <div className="flex flex-col items-center gap-4">
-                {modalSteps[modalSteps.length - 1].icon}
-                <p className="text-base font-semibold text-slate-900">
-                  {modalSteps[modalSteps.length - 1].message}
-                </p>
-                <button
-                  onClick={() => {
-                    window.location.hash = '#map';
-                  }}
-                  className="mt-2 px-5 py-2.5 bg-emerald-600 text-white font-bold rounded-full text-sm shadow-md"
-                >
-                  Access Dashboard
-                </button>
-              </div>
-            )}
-          </motion.div>
-        </motion.div>
-      )}
-    </AnimatePresence>
+  // GSAP animation for smooth stagger entrance of form fields and card hero
+  useGSAP(
+    () => {
+      const tl = gsap.timeline({ defaults: { ease: 'power3.out', duration: 0.6 } });
+      tl.fromTo('.auth-left-box', { opacity: 0, x: -30 }, { opacity: 1, x: 0 })
+        .fromTo('.auth-field', { opacity: 0, y: 15 }, { opacity: 1, y: 0, stagger: 0.06 }, '-=0.3')
+        .fromTo('.auth-right-box', { opacity: 0, scale: 0.96 }, { opacity: 1, scale: 1 }, '-=0.4');
+    },
+    { scope: containerRef }
   );
 
   return (
-    <div className="bg-slate-50 min-h-screen w-screen flex flex-col justify-center items-center relative overflow-hidden font-sans">
-      <Confetti
-        ref={confettiRef}
-        manualstart
-        className="fixed top-0 left-0 w-full h-full pointer-events-none z-[999]"
-      />
-      <Modal />
-
-      <div className="fixed top-6 left-6 right-6 z-20 flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-lg bg-orange-600 text-white font-black flex items-center justify-center text-sm shadow-sm">
+    <section
+      ref={containerRef}
+      className="min-h-screen bg-white p-3 text-black antialiased [font-synthesis:none] dark:bg-[#050505] dark:text-white font-sans relative"
+    >
+      {/* Navigation Header overlay */}
+      <div className="absolute top-6 left-8 right-8 z-30 flex items-center justify-between pointer-events-none">
+        <div className="flex items-center gap-2 pointer-events-auto">
+          <div className="w-8 h-8 rounded-lg bg-[#e0611c] text-white font-black flex items-center justify-center text-xs shadow-sm">
             BR
           </div>
-          <h1 className="text-lg font-black tracking-tight text-slate-900">
-            betterroads<span className="text-orange-600">.</span>
-          </h1>
+          <span className="font-display text-lg font-extrabold tracking-tight text-slate-900 dark:text-white">
+            betterroads<span className="text-[#e0611c]">.</span>
+          </span>
         </div>
         <button
           onClick={() => {
             window.location.hash = '#map';
           }}
-          className="px-4 py-2 bg-white/80 backdrop-blur-sm border border-slate-300 hover:bg-slate-100 text-slate-700 font-semibold rounded-full text-xs transition-all shadow-sm flex items-center gap-1.5"
+          className="pointer-events-auto px-4 py-2 bg-white/90 dark:bg-black/90 backdrop-blur-md border border-black/15 dark:border-white/15 hover:bg-black/5 dark:hover:bg-white/10 text-xs font-bold rounded-full transition-all shadow-sm flex items-center gap-1.5"
         >
           ← Back to Map
         </button>
       </div>
 
-      <div className="relative z-10 flex flex-col items-center justify-center max-w-md w-full p-8 bg-white/90 backdrop-blur-md rounded-3xl border border-slate-200 shadow-2xl">
-        <div className="absolute inset-0 z-0 opacity-40 rounded-3xl overflow-hidden">
-          <GradientBackground />
+      <div className="grid min-h-[calc(100vh-1.5rem)] gap-6 lg:grid-cols-[0.94fr_1.06fr] pt-12 lg:pt-0">
+        {/* Left Column Form */}
+        <div className="auth-left-box flex min-h-[760px] items-start rounded-md border border-black/20 bg-white px-6 py-12 sm:px-10 dark:border-white/10 dark:bg-[#0a0a0a] lg:min-h-0 lg:px-14 lg:py-28 xl:px-20">
+          <div className="mx-auto w-full max-w-[590px]">
+            <div>
+              <h1 className="whitespace-nowrap text-3xl font-medium tracking-[-0.04em] sm:text-4xl lg:text-[42px] lg:leading-[1.05] xl:text-[50px]">
+                Create an account
+              </h1>
+              <p className="mt-3 whitespace-nowrap text-lg leading-snug text-black/60 dark:text-white/55 sm:text-xl lg:text-2xl xl:text-3xl">
+                Monitor road health & empower civic action
+              </p>
+            </div>
+
+            <div className="auth-field mt-12 grid gap-5 sm:grid-cols-2">
+              <SocialButton icon={<GoogleIcon />} label="Sign up with Google" />
+              <SocialButton icon={<AppleIcon />} label="Sign up with Apple" />
+            </div>
+
+            <div className="auth-field my-10 text-center text-xl font-medium text-black/60 dark:text-white/50">
+              or
+            </div>
+
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                window.location.hash = '#map';
+              }}
+              className="space-y-5"
+            >
+              <div className="grid gap-5 sm:grid-cols-2">
+                {formFields.map((field) => (
+                  <div key={field.label} className="auth-field">
+                    <FieldBox label={field.label} value={field.value} />
+                  </div>
+                ))}
+              </div>
+
+              <div className="auth-field">
+                <FieldBox
+                  label="Email"
+                  value="harshitlog@gmail.com"
+                  type="email"
+                />
+              </div>
+
+              <div className="auth-field">
+                <FieldBox
+                  label="Password"
+                  value="*************"
+                  type="password"
+                />
+              </div>
+
+              <div className="auth-field space-y-4 pt-2 text-sm leading-5 text-black/30 dark:text-white/35 sm:text-[15px]">
+                <CheckboxLine>
+                  I want to receive alerts about ward SLA breaches and road updates
+                </CheckboxLine>
+                <CheckboxLine>{termsText}</CheckboxLine>
+              </div>
+
+              <button
+                type="submit"
+                className="auth-field mt-9 flex h-12 w-full items-center justify-center rounded-[10px] border border-black/40 bg-black text-xl font-medium text-white transition-colors hover:bg-black/85 dark:border-white/40 dark:bg-white dark:text-black dark:hover:bg-white/85"
+              >
+                Submit
+              </button>
+            </form>
+          </div>
         </div>
 
-        <fieldset
-          disabled={modalStatus !== 'closed'}
-          className="relative z-10 flex flex-col items-center gap-6 w-full"
-        >
-          <AnimatePresence mode="wait">
-            {authStep === 'email' && (
-              <motion.div
-                key="email-content"
-                initial={{ y: 6, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.3, ease: 'easeOut' }}
-                className="w-full flex flex-col items-center gap-4 text-center"
-              >
-                <BlurFade delay={0.1} className="w-full">
-                  <h2 className="text-3xl font-extrabold text-slate-900 tracking-tight">
-                    Get started with BetterRoads
-                  </h2>
-                </BlurFade>
-                <BlurFade delay={0.2}>
-                  <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
-                    Sign in to report road hazards
-                  </p>
-                </BlurFade>
-              </motion.div>
-            )}
-            {authStep === 'password' && (
-              <motion.div
-                key="password-title"
-                initial={{ y: 6, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.3, ease: 'easeOut' }}
-                className="w-full flex flex-col items-center text-center gap-2"
-              >
-                <BlurFade delay={0}>
-                  <h2 className="text-2xl font-bold text-slate-900">Create password</h2>
-                </BlurFade>
-                <BlurFade delay={0.1}>
-                  <p className="text-xs text-slate-500">Minimum 6 characters required</p>
-                </BlurFade>
-              </motion.div>
-            )}
-            {authStep === 'confirmPassword' && (
-              <motion.div
-                key="confirm-title"
-                initial={{ y: 6, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.3, ease: 'easeOut' }}
-                className="w-full flex flex-col items-center text-center gap-2"
-              >
-                <BlurFade delay={0}>
-                  <h2 className="text-2xl font-bold text-slate-900">Confirm password</h2>
-                </BlurFade>
-              </motion.div>
-            )}
-          </AnimatePresence>
+        {/* Right Column Shader Hero */}
+        <div className="auth-right-box relative flex min-h-[720px] overflow-hidden rounded-md bg-black p-8 text-white sm:p-12 lg:min-h-0">
+          <GrainGradient
+            speed={1}
+            scale={1}
+            rotation={0}
+            offsetX={0}
+            offsetY={0}
+            softness={0.5}
+            intensity={0.5}
+            noise={0.25}
+            shape="corners"
+            frame={2854.5}
+            colors={['#FFFFFF', '#FC7819', '#FC7819', '#FFFFFF']}
+            colorBack="#00000000"
+            className="absolute inset-0 bg-black"
+          />
 
-          <form onSubmit={handleFinalSubmit} className="w-full space-y-4">
-            <AnimatePresence>
-              {authStep !== 'confirmPassword' && (
-                <motion.div
-                  key="email-password-fields"
-                  exit={{ opacity: 0, filter: 'blur(4px)' }}
-                  transition={{ duration: 0.3, ease: 'easeOut' }}
-                  className="w-full space-y-4"
-                >
-                  <BlurFade delay={0.2} className="w-full">
-                    <div className="relative w-full">
-                      <div className="flex items-center gap-2 border border-slate-300 rounded-xl px-3 py-2.5 bg-white shadow-sm focus-within:border-orange-500 focus-within:ring-1 focus-within:ring-orange-500">
-                        <Mail className="w-5 h-5 text-slate-400 shrink-0" />
-                        <input
-                          type="email"
-                          placeholder="name@example.com"
-                          value={email}
-                          onChange={(e) => setEmail(e.target.value)}
-                          onKeyDown={handleKeyDown}
-                          className="w-full text-sm bg-transparent outline-none text-slate-900 placeholder-slate-400"
-                        />
-                        {isEmailValid && authStep === 'email' && (
-                          <button
-                            type="button"
-                            onClick={handleProgressStep}
-                            className="p-1.5 bg-orange-600 text-white rounded-lg text-xs font-bold hover:bg-orange-700 transition-colors"
-                          >
-                            <ArrowRight className="w-4 h-4" />
-                          </button>
-                        )}
-                      </div>
-                    </div>
-                  </BlurFade>
+          <div className="relative z-10 flex h-full w-full flex-col justify-between">
+            <h2 className="max-w-[620px] pt-0 text-5xl font-medium tracking-[-0.05em] text-white sm:text-6xl lg:pt-16 lg:text-[64px] lg:leading-[0.98] xl:text-[70px]">
+              Think fast,
+              <br />
+              Build better roads
+            </h2>
 
-                  {authStep === 'password' && (
-                    <BlurFade key="password-field" className="w-full space-y-3">
-                      <div className="relative w-full">
-                        <div className="flex items-center gap-2 border border-slate-300 rounded-xl px-3 py-2.5 bg-white shadow-sm focus-within:border-orange-500 focus-within:ring-1 focus-within:ring-orange-500">
-                          <Lock className="w-5 h-5 text-slate-400 shrink-0" />
-                          <input
-                            ref={passwordInputRef}
-                            type={showPassword ? 'text' : 'password'}
-                            placeholder="Password"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            onKeyDown={handleKeyDown}
-                            className="w-full text-sm bg-transparent outline-none text-slate-900 placeholder-slate-400"
-                          />
-                          {isPasswordValid && (
-                            <button
-                              type="button"
-                              onClick={handleProgressStep}
-                              className="p-1.5 bg-orange-600 text-white rounded-lg text-xs font-bold hover:bg-orange-700 transition-colors"
-                            >
-                              <ArrowRight className="w-4 h-4" />
-                            </button>
-                          )}
-                        </div>
-                      </div>
-                      <button
-                        type="button"
-                        onClick={handleGoBack}
-                        className="flex items-center gap-1.5 text-xs text-slate-500 hover:text-slate-900 font-medium"
-                      >
-                        <ArrowLeft className="w-3.5 h-3.5" /> Back
-                      </button>
-                    </BlurFade>
-                  )}
-                </motion.div>
-              )}
-            </AnimatePresence>
-
-            <AnimatePresence>
-              {authStep === 'confirmPassword' && (
-                <BlurFade key="confirm-password-field" className="w-full space-y-3">
-                  <div className="relative w-full">
-                    <div className="flex items-center gap-2 border border-slate-300 rounded-xl px-3 py-2.5 bg-white shadow-sm focus-within:border-orange-500 focus-within:ring-1 focus-within:ring-orange-500">
-                      <Lock className="w-5 h-5 text-slate-400 shrink-0" />
-                      <input
-                        ref={confirmPasswordInputRef}
-                        type={showConfirmPassword ? 'text' : 'password'}
-                        placeholder="Confirm Password"
-                        value={confirmPassword}
-                        onChange={(e) => setConfirmPassword(e.target.value)}
-                        className="w-full text-sm bg-transparent outline-none text-slate-900 placeholder-slate-400"
-                      />
-                      {isConfirmPasswordValid && (
-                        <button
-                          type="submit"
-                          className="p-1.5 bg-orange-600 text-white rounded-lg text-xs font-bold hover:bg-orange-700 transition-colors"
-                        >
-                          <ArrowRight className="w-4 h-4" />
-                        </button>
-                      )}
-                    </div>
-                  </div>
-                  <button
-                    type="button"
-                    onClick={handleGoBack}
-                    className="flex items-center gap-1.5 text-xs text-slate-500 hover:text-slate-900 font-medium"
-                  >
-                    <ArrowLeft className="w-3.5 h-3.5" /> Back
-                  </button>
-                </BlurFade>
-              )}
-            </AnimatePresence>
-          </form>
-        </fieldset>
+            <a
+              href="#map"
+              onClick={(e) => {
+                e.preventDefault();
+                alert('BetterRoads Mobile App for iOS & Android is launching soon!');
+              }}
+              className="mb-0 inline-flex h-12 max-w-full items-center gap-3 rounded-[10px] border border-white/25 px-5 text-base font-medium text-white/85 backdrop-blur-sm transition-colors hover:border-white/45 hover:text-white xl:mb-32 xl:px-6 xl:text-2xl"
+            >
+              <WindowsIcon className="size-5 shrink-0 xl:size-7" />
+              <span className="truncate whitespace-nowrap">
+                Download the BetterRoads app
+              </span>
+            </a>
+          </div>
+        </div>
       </div>
-    </div>
+    </section>
+  );
+}
+
+function SocialButton({ icon, label }) {
+  return (
+    <button
+      type="button"
+      className="flex h-10 items-center justify-center gap-2 rounded-[10px] border border-black/25 bg-white px-3 text-sm leading-none text-black transition-colors hover:bg-black/[0.03] dark:border-white/20 dark:bg-white/5 dark:text-white dark:hover:bg-white/10 xl:text-[19px]"
+    >
+      <span className="shrink-0">{icon}</span>
+      <span className="whitespace-nowrap">{label}</span>
+    </button>
+  );
+}
+
+function FieldBox({ label, value, type = 'text' }) {
+  const [inputValue, setInputValue] = useState(value);
+  const [isEditing, setIsEditing] = useState(false);
+
+  return (
+    <label className="flex h-14 items-center justify-between gap-4 rounded-[10px] border border-black/25 bg-white px-5 text-lg leading-none dark:border-white/15 dark:bg-white/5 xl:text-xl">
+      <input
+        type={type}
+        value={inputValue}
+        aria-label={label}
+        onFocus={() => {
+          if (!isEditing) {
+            setInputValue('');
+            setIsEditing(true);
+          }
+        }}
+        onChange={(event) => {
+          setInputValue(event.target.value);
+          setIsEditing(true);
+        }}
+        className="min-w-0 flex-1 truncate bg-transparent text-black/80 outline-none placeholder:text-black/30 dark:text-white/90 dark:placeholder:text-white/35"
+      />
+      {!isEditing && (
+        <span className="shrink-0 text-black dark:text-white">{label}</span>
+      )}
+    </label>
+  );
+}
+
+function CheckboxLine({ children }) {
+  return (
+    <label className="flex items-start gap-3 cursor-pointer">
+      <span className="relative mt-1 size-3.5 shrink-0">
+        <input
+          type="checkbox"
+          className="peer size-full appearance-none rounded-[2px] border border-black/25 bg-white checked:border-black checked:bg-black dark:border-white/30 dark:bg-white/5 dark:checked:border-white dark:checked:bg-white"
+        />
+        <svg
+          viewBox="0 0 12 12"
+          className="pointer-events-none absolute inset-0 hidden size-full p-0.5 text-white peer-checked:block dark:text-black"
+          fill="none"
+          aria-hidden="true"
+        >
+          <path
+            d="M3 6.2 5 8.1 9 3.9"
+            stroke="currentColor"
+            strokeWidth="1.6"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        </svg>
+      </span>
+      <span>{children}</span>
+    </label>
+  );
+}
+
+function GoogleIcon() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true">
+      <path
+        d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09Z"
+        fill="#4285F4"
+      />
+      <path
+        d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23Z"
+        fill="#34A853"
+      />
+      <path
+        d="M5.84 14.1c-.22-.66-.35-1.36-.35-2.1s.13-1.44.35-2.1V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l3.66-2.84Z"
+        fill="#FBBC05"
+      />
+      <path
+        d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84C6.71 7.3 9.14 5.38 12 5.38Z"
+        fill="#EB4335"
+      />
+    </svg>
+  );
+}
+
+function AppleIcon() {
+  return (
+    <svg
+      width="18"
+      height="18"
+      viewBox="0 0 24 24"
+      fill="currentColor"
+      aria-hidden="true"
+    >
+      <path d="M17.05 12.54c-.03-3.02 2.47-4.47 2.58-4.54-1.41-2.06-3.6-2.34-4.38-2.37-1.86-.19-3.64 1.1-4.58 1.1-.95 0-2.42-1.07-3.98-1.04-2.05.03-3.94 1.19-4.99 3.02-2.13 3.69-.54 9.16 1.53 12.15 1.01 1.46 2.22 3.1 3.81 3.04 1.53-.06 2.11-.99 3.96-.99s2.37.99 3.99.96c1.65-.03 2.69-1.49 3.69-2.96 1.16-1.69 1.64-3.33 1.66-3.41-.04-.02-3.2-1.23-3.24-4.87ZM14.03 3.66c.84-1.02 1.41-2.43 1.25-3.84-1.21.05-2.68.81-3.55 1.83-.78.9-1.46 2.34-1.28 3.72 1.35.1 2.73-.69 3.58-1.71Z" />
+    </svg>
+  );
+}
+
+function WindowsIcon({ className }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="currentColor"
+      className={className}
+      aria-hidden="true"
+    >
+      <path d="M3 4.7 10.7 3.6v7.7H3V4.7Zm8.8-1.25L21 2.1v9.2h-9.2V3.45ZM3 12.7h7.7v7.7L3 19.3v-6.6Zm8.8 0H21v9.2l-9.2-1.3v-7.9Z" />
+    </svg>
   );
 }

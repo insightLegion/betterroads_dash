@@ -57,10 +57,11 @@ export default function ComplaintView() {
   };
 
   return (
-    <div style={{ display: 'flex', gap: 24, padding: 24, background: 'var(--surface-2)', height: '100%', overflow: 'auto' }}>
+    <div style={{ display: 'flex', flexDirection: 'row', gap: 24, padding: 24, background: 'var(--surface-2)', height: '100%', overflow: 'auto' }}>
       <section style={{
         flex: 1,
         minWidth: 0,
+        order: 1,
         background: 'var(--surface)',
         border: 'var(--border)',
         borderRadius: 'var(--radius-md)',
