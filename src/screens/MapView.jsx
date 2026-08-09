@@ -68,11 +68,13 @@ export default function MapView() {
           maxZoom={17}
           style={{ height: '100%', width: '100%' }}
           zoomControl={false}
-          attributionControl={false}
         >
+          {/* attributionControl is left ON deliberately: with it disabled the
+              `attribution` prop below renders nowhere, and both the OSM tile
+              usage policy and ODbL require the credit to be visible. */}
           <TileLayer
-            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-            attribution="&copy; OpenStreetMap"
+            url="https://tile.openstreetmap.org/{z}/{x}/{y}.png"
+            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           />
 
           {showWardPolygons && (

@@ -22,3 +22,6 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Raw Overpass responses (12 MB); regenerate with scripts/fetch-osm-roads.mjs
+scripts/.osm-cache

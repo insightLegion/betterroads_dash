@@ -1,22 +1,15 @@
 import { Polyline, Tooltip } from 'react-leaflet';
 import { AREAS, severityColorHex, scoreToSeverity } from '../../data/areas.js';
+import ROAD_GEOMETRY from '../../data/roadGeometry.json';
 
-// Road segments spread out from each area's centroid so that at zoom 12–17
-// the map reads as a grid of colored streets rather than a single dot.
-const RADIUS = 0.009; // ~1 km from centroid
-const SEGMENT_HALF = 0.004; // ~440 m half-length
-
-function segmentFor(area, index, count) {
-  const angle = (index / count) * Math.PI * 2 + (index * 0.3); // jitter
-  const cx = area.lat + Math.cos(angle) * RADIUS;
-  const cy = area.lng + Math.sin(angle) * RADIUS;
-  const perp = angle + Math.PI / 2;
-  const dx = Math.cos(perp) * SEGMENT_HALF;
-  const dy = Math.sin(perp) * SEGMENT_HALF;
-  return [
-    [cx - dx, cy - dy],
-    [cx + dx, cy + dy],
-  ];
+// Road geometry is real OpenStreetMap way geometry, baked by
+// `node scripts/fetch-osm-roads.mjs` into src/data/roadGeometry.json.
+// Keys are `${areaId}::${roadName}`; the value is an array of polylines
+// (a road is usually several OSM ways), or `null` when OSM has no road under
+// that name — those are NOT drawn, because a straight line between two guessed
+// points is worse than an absent one.
+export function geometryFor(areaId, roadName) {
+  return ROAD_GEOMETRY[`${areaId}::${roadName}`] ?? null;
 }
 
 function scoreForRoad(areaScore, salt) {
@@ -55,23 +48,42 @@ export default function RoadSegments({ monthIndex, zoom, layer, onSelectRoad, se
     <>
       {Object.entries(AREAS).flatMap(([areaId, area]) => {
         const areaScore = area.history[monthIndex] ?? area.score;
-        const roads = area.roads;
-        return roads.map((roadName, i) => {
+
+        return area.roads.flatMap((roadName, i) => {
+          const lines = geometryFor(areaId, roadName);
+          if (!lines) return [];
+
           const score = scoreForRoad(areaScore, roadName.length + i);
           const severity = scoreToSeverity(score);
           const color = colorForLayer(layer, area, score, monthIndex);
           const isSelected =
             selectedRoad && selectedRoad.areaId === areaId && selectedRoad.roadName === roadName;
+          const weight = isSelected ? baseWeight + 4 : baseWeight;
 
-          return (
+          // A white casing under the colour keeps the severity legible against
+          // the OSM basemap, which already draws roads in yellows and greys.
+          return [
+            <Polyline
+              key={`${areaId}-${roadName}-casing`}
+              positions={lines}
+              interactive={false}
+              pathOptions={{
+                color: '#ffffff',
+                weight: weight + 4,
+                opacity: 0.85,
+                lineCap: 'round',
+                lineJoin: 'round',
+              }}
+            />,
             <Polyline
               key={`${areaId}-${roadName}`}
-              positions={segmentFor(area, i, roads.length)}
+              positions={lines}
               pathOptions={{
                 color,
-                weight: isSelected ? baseWeight + 4 : baseWeight,
+                weight,
                 opacity: isSelected ? 1 : 0.92,
                 lineCap: 'round',
+                lineJoin: 'round',
               }}
               eventHandlers={{
                 click: () => onSelectRoad({ areaId, roadName }),
@@ -83,8 +95,8 @@ export default function RoadSegments({ monthIndex, zoom, layer, onSelectRoad, se
                   {score}/100 · {severity} · {area.name}
                 </div>
               </Tooltip>
-            </Polyline>
-          );
+            </Polyline>,
+          ];
         });
       })}
     </>
