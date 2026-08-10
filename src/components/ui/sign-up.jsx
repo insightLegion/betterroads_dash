@@ -5,18 +5,13 @@ import { useGSAP } from '@gsap/react';
 
 gsap.registerPlugin(useGSAP);
 
-const formFields = [
-  { label: 'First Name', value: 'Harshit', type: 'text' },
-  { label: 'Last Name', value: 'Sharma', type: 'text' },
-];
-
 const termsText = (
-  <>
+  <span style={{ fontSize: 13, color: '#475569' }}>
     By creating an account, you agree to our{' '}
     <a
       href="#terms"
       onClick={(e) => e.preventDefault()}
-      className="font-medium text-black/45 underline underline-offset-2 dark:text-white/45"
+      style={{ color: '#e0611c', fontWeight: 600, textDecoration: 'underline' }}
     >
       Terms and Services
     </a>{' '}
@@ -24,15 +19,16 @@ const termsText = (
     <a
       href="#privacy"
       onClick={(e) => e.preventDefault()}
-      className="font-medium text-black/45 underline underline-offset-2 dark:text-white/45"
+      style={{ color: '#e0611c', fontWeight: 600, textDecoration: 'underline' }}
     >
       Privacy Policy
     </a>
-  </>
+  </span>
 );
 
 export function AuthComponent() {
   const containerRef = useRef(null);
+  const downloadBtnRef = useRef(null);
 
   // GSAP animation for smooth stagger entrance of form fields and card hero
   useGSAP(
@@ -45,10 +41,31 @@ export function AuthComponent() {
     { scope: containerRef }
   );
 
+  // GSAP hover animation for the download button
+  const handleMouseEnter = () => {
+    gsap.to(downloadBtnRef.current, {
+      scale: 1.03,
+      borderColor: 'rgba(255, 255, 255, 0.65)',
+      boxShadow: '0 8px 24px rgba(252, 120, 25, 0.25)',
+      duration: 0.3,
+      ease: 'power2.out',
+    });
+  };
+
+  const handleMouseLeave = () => {
+    gsap.to(downloadBtnRef.current, {
+      scale: 1,
+      borderColor: 'rgba(255, 255, 255, 0.25)',
+      boxShadow: 'none',
+      duration: 0.3,
+      ease: 'power2.out',
+    });
+  };
+
   return (
     <section
       ref={containerRef}
-      className="min-h-screen bg-white p-3 text-black antialiased [font-synthesis:none] dark:bg-[#050505] dark:text-white font-sans relative"
+      className="min-h-screen bg-[#fafaf9] p-4 text-black antialiased [font-synthesis:none] dark:bg-[#09090b] dark:text-white font-sans relative flex items-center justify-center"
     >
       {/* Navigation Header overlay */}
       <div className="absolute top-6 left-8 right-8 z-30 flex items-center justify-between pointer-events-none">
@@ -56,7 +73,7 @@ export function AuthComponent() {
           <div className="w-8 h-8 rounded-lg bg-[#e0611c] text-white font-black flex items-center justify-center text-xs shadow-sm">
             BR
           </div>
-          <span className="font-display text-lg font-extrabold tracking-tight text-slate-900 dark:text-white">
+          <span className="font-display text-lg font-extrabold tracking-tight text-slate-950 dark:text-white">
             betterroads<span className="text-[#e0611c]">.</span>
           </span>
         </div>
@@ -64,32 +81,44 @@ export function AuthComponent() {
           onClick={() => {
             window.location.hash = '#map';
           }}
-          className="pointer-events-auto px-4 py-2 bg-white/90 dark:bg-black/90 backdrop-blur-md border border-black/15 dark:border-white/15 hover:bg-black/5 dark:hover:bg-white/10 text-xs font-bold rounded-full transition-all shadow-sm flex items-center gap-1.5"
+          className="pointer-events-auto px-4 py-2 bg-white/90 dark:bg-black/90 backdrop-blur-md border border-slate-200 dark:border-white/10 hover:bg-slate-50 dark:hover:bg-white/5 text-xs font-bold rounded-full transition-all shadow-sm flex items-center gap-1.5"
         >
           ← Back to Map
         </button>
       </div>
 
-      <div className="grid min-h-[calc(100vh-1.5rem)] gap-6 lg:grid-cols-[0.94fr_1.06fr] pt-12 lg:pt-0">
+      <div
+        className="grid w-full max-w-[1280px] gap-6 lg:grid-cols-[0.94fr_1.06fr] pt-12 lg:pt-0"
+        style={{ minHeight: 'calc(100vh - 3rem)' }}
+      >
         {/* Left Column Form */}
-        <div className="auth-left-box flex min-h-[760px] items-start rounded-md border border-black/20 bg-white px-6 py-12 sm:px-10 dark:border-white/10 dark:bg-[#0a0a0a] lg:min-h-0 lg:px-14 lg:py-28 xl:px-20">
-          <div className="mx-auto w-full max-w-[590px]">
+        <div className="auth-left-box flex items-center rounded-2xl border border-slate-200 bg-white px-6 py-12 sm:px-10 dark:border-white/10 dark:bg-[#09090b] lg:px-14 lg:py-16 xl:px-20 shadow-sm">
+          <div className="mx-auto w-full max-w-[480px]">
             <div>
-              <h1 className="whitespace-nowrap text-3xl font-medium tracking-[-0.04em] sm:text-4xl lg:text-[42px] lg:leading-[1.05] xl:text-[50px]">
+              <h1 className="text-3xl font-extrabold tracking-tight text-slate-900 dark:text-white sm:text-4xl lg:text-[42px] lg:leading-[1.05]">
                 Create an account
               </h1>
-              <p className="mt-3 whitespace-nowrap text-lg leading-snug text-black/60 dark:text-white/55 sm:text-xl lg:text-2xl xl:text-3xl">
+              <p className="mt-2 text-base text-slate-500 dark:text-slate-400">
                 Monitor road health & empower civic action
               </p>
             </div>
 
-            <div className="auth-field mt-12 grid gap-5 sm:grid-cols-2">
+            <div className="auth-field mt-8 grid gap-4 sm:grid-cols-2">
               <SocialButton icon={<GoogleIcon />} label="Sign up with Google" />
               <SocialButton icon={<AppleIcon />} label="Sign up with Apple" />
             </div>
 
-            <div className="auth-field my-10 text-center text-xl font-medium text-black/60 dark:text-white/50">
-              or
+            <div
+              className="auth-field my-8 text-center text-sm font-semibold text-slate-400"
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: 12,
+              }}
+            >
+              <div style={{ flex: 1, height: 1, background: '#e2e8f0' }} />
+              OR EMAIL
+              <div style={{ flex: 1, height: 1, background: '#e2e8f0' }} />
             </div>
 
             <form
@@ -97,14 +126,15 @@ export function AuthComponent() {
                 e.preventDefault();
                 window.location.hash = '#map';
               }}
-              className="space-y-5"
+              className="space-y-4"
             >
-              <div className="grid gap-5 sm:grid-cols-2">
-                {formFields.map((field) => (
-                  <div key={field.label} className="auth-field">
-                    <FieldBox label={field.label} value={field.value} />
-                  </div>
-                ))}
+              <div className="grid gap-4 sm:grid-cols-2">
+                <div className="auth-field">
+                  <FieldBox label="First Name" value="Harshit" placeholder="e.g. Harshit" />
+                </div>
+                <div className="auth-field">
+                  <FieldBox label="Last Name" value="Sharma" placeholder="e.g. Sharma" />
+                </div>
               </div>
 
               <div className="auth-field">
@@ -112,6 +142,7 @@ export function AuthComponent() {
                   label="Email"
                   value="harshitlog@gmail.com"
                   type="email"
+                  placeholder="name@example.com"
                 />
               </div>
 
@@ -120,37 +151,40 @@ export function AuthComponent() {
                   label="Password"
                   value="*************"
                   type="password"
+                  placeholder="At least 6 characters"
                 />
               </div>
 
-              <div className="auth-field space-y-4 pt-2 text-sm leading-5 text-black/30 dark:text-white/35 sm:text-[15px]">
+              <div className="auth-field space-y-3 pt-2">
                 <CheckboxLine>
-                  I want to receive alerts about ward SLA breaches and road updates
+                  <span style={{ fontSize: 13, color: '#475569' }}>
+                    I want to receive alerts about ward SLA breaches and road updates
+                  </span>
                 </CheckboxLine>
                 <CheckboxLine>{termsText}</CheckboxLine>
               </div>
 
               <button
                 type="submit"
-                className="auth-field mt-9 flex h-12 w-full items-center justify-center rounded-[10px] border border-black/40 bg-black text-xl font-medium text-white transition-colors hover:bg-black/85 dark:border-white/40 dark:bg-white dark:text-black dark:hover:bg-white/85"
+                className="auth-field mt-6 flex h-11 w-full items-center justify-center rounded-xl bg-[#e0611c] text-base font-bold text-white transition-all hover:bg-[#c85315] shadow-md shadow-orange-600/10 cursor-pointer"
               >
-                Submit
+                Get Started
               </button>
             </form>
           </div>
         </div>
 
         {/* Right Column Shader Hero */}
-        <div className="auth-right-box relative flex min-h-[720px] overflow-hidden rounded-md bg-black p-8 text-white sm:p-12 lg:min-h-0">
+        <div className="auth-right-box relative flex min-h-[560px] overflow-hidden rounded-2xl bg-black p-8 text-white sm:p-12 lg:min-h-0">
           <GrainGradient
-            speed={1}
+            speed={1.2}
             scale={1}
             rotation={0}
             offsetX={0}
             offsetY={0}
-            softness={0.5}
-            intensity={0.5}
-            noise={0.25}
+            softness={0.4}
+            intensity={0.6}
+            noise={0.2}
             shape="corners"
             frame={2854.5}
             colors={['#FFFFFF', '#FC7819', '#FC7819', '#FFFFFF']}
@@ -159,23 +193,26 @@ export function AuthComponent() {
           />
 
           <div className="relative z-10 flex h-full w-full flex-col justify-between">
-            <h2 className="max-w-[620px] pt-0 text-5xl font-medium tracking-[-0.05em] text-white sm:text-6xl lg:pt-16 lg:text-[64px] lg:leading-[0.98] xl:text-[70px]">
+            <h2 className="max-w-[620px] pt-0 text-5xl font-extrabold tracking-[-0.04em] text-white sm:text-6xl lg:pt-12 lg:text-[60px] lg:leading-[0.98]">
               Think fast,
               <br />
               Build better roads
             </h2>
 
             <a
-              href="#map"
+              ref={downloadBtnRef}
+              href="#download"
+              onMouseEnter={handleMouseEnter}
+              onMouseLeave={handleMouseLeave}
               onClick={(e) => {
                 e.preventDefault();
                 alert('BetterRoads Mobile App for iOS & Android is launching soon!');
               }}
-              className="mb-0 inline-flex h-12 max-w-full items-center gap-3 rounded-[10px] border border-white/25 px-5 text-base font-medium text-white/85 backdrop-blur-sm transition-colors hover:border-white/45 hover:text-white xl:mb-32 xl:px-6 xl:text-2xl"
+              className="mb-0 inline-flex h-12 max-w-full items-center gap-3 rounded-xl border border-white/25 px-5 text-base font-bold text-white backdrop-blur-md transition-all xl:mb-16"
             >
-              <WindowsIcon className="size-5 shrink-0 xl:size-7" />
+              <SmartphoneIcon />
               <span className="truncate whitespace-nowrap">
-                Download the BetterRoads app
+                Download the BetterRoads App
               </span>
             </a>
           </div>
@@ -189,7 +226,7 @@ function SocialButton({ icon, label }) {
   return (
     <button
       type="button"
-      className="flex h-10 items-center justify-center gap-2 rounded-[10px] border border-black/25 bg-white px-3 text-sm leading-none text-black transition-colors hover:bg-black/[0.03] dark:border-white/20 dark:bg-white/5 dark:text-white dark:hover:bg-white/10 xl:text-[19px]"
+      className="flex h-10 items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-3 text-sm font-semibold text-slate-700 transition-colors hover:bg-slate-50 cursor-pointer"
     >
       <span className="shrink-0">{icon}</span>
       <span className="whitespace-nowrap">{label}</span>
@@ -197,59 +234,99 @@ function SocialButton({ icon, label }) {
   );
 }
 
-function FieldBox({ label, value, type = 'text' }) {
+function FieldBox({ label, value, type = 'text', placeholder }) {
   const [inputValue, setInputValue] = useState(value);
-  const [isEditing, setIsEditing] = useState(false);
 
   return (
-    <label className="flex h-14 items-center justify-between gap-4 rounded-[10px] border border-black/25 bg-white px-5 text-lg leading-none dark:border-white/15 dark:bg-white/5 xl:text-xl">
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 6, width: '100%' }}>
+      <span style={{ fontSize: 13, fontWeight: 700, color: '#334155' }}>{label}</span>
       <input
         type={type}
         value={inputValue}
-        aria-label={label}
-        onFocus={() => {
-          if (!isEditing) {
-            setInputValue('');
-            setIsEditing(true);
-          }
+        placeholder={placeholder}
+        onChange={(e) => setInputValue(e.target.value)}
+        style={{
+          width: '100%',
+          height: '42px',
+          border: '1px solid #cbd5e1',
+          borderRadius: '8px',
+          padding: '0 14px',
+          fontSize: '14px',
+          background: '#ffffff',
+          color: '#0f172a',
+          outline: 'none',
+          boxShadow: 'none',
+          transition: 'all 0.15s ease',
         }}
-        onChange={(event) => {
-          setInputValue(event.target.value);
-          setIsEditing(true);
+        onFocus={(e) => {
+          e.target.style.borderColor = '#e0611c';
+          e.target.style.boxShadow = '0 0 0 2px rgba(224, 97, 28, 0.15)';
+          if (inputValue === value) setInputValue('');
         }}
-        className="min-w-0 flex-1 truncate bg-transparent text-black/80 outline-none placeholder:text-black/30 dark:text-white/90 dark:placeholder:text-white/35"
+        onBlur={(e) => {
+          e.target.style.borderColor = '#cbd5e1';
+          e.target.style.boxShadow = 'none';
+        }}
       />
-      {!isEditing && (
-        <span className="shrink-0 text-black dark:text-white">{label}</span>
-      )}
-    </label>
+    </div>
   );
 }
 
 function CheckboxLine({ children }) {
   return (
     <label className="flex items-start gap-3 cursor-pointer">
-      <span className="relative mt-1 size-3.5 shrink-0">
+      <span className="relative mt-0.5 size-4 shrink-0">
         <input
           type="checkbox"
-          className="peer size-full appearance-none rounded-[2px] border border-black/25 bg-white checked:border-black checked:bg-black dark:border-white/30 dark:bg-white/5 dark:checked:border-white dark:checked:bg-white"
+          style={{
+            appearance: 'none',
+            WebkitAppearance: 'none',
+            width: '100%',
+            height: '100%',
+            borderRadius: '4px',
+            border: '1.5px solid #cbd5e1',
+            background: '#ffffff',
+            cursor: 'pointer',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            outline: 'none',
+            padding: 0,
+          }}
+          onChange={(e) => {
+            const el = e.target;
+            if (el.checked) {
+              el.style.background = '#e0611c';
+              el.style.borderColor = '#e0611c';
+            } else {
+              el.style.background = '#ffffff';
+              el.style.borderColor = '#cbd5e1';
+            }
+          }}
         />
         <svg
           viewBox="0 0 12 12"
-          className="pointer-events-none absolute inset-0 hidden size-full p-0.5 text-white peer-checked:block dark:text-black"
+          style={{
+            position: 'absolute',
+            inset: 0,
+            width: '100%',
+            height: '100%',
+            padding: '2px',
+            color: '#ffffff',
+            pointerEvents: 'none',
+          }}
           fill="none"
-          aria-hidden="true"
         >
           <path
             d="M3 6.2 5 8.1 9 3.9"
             stroke="currentColor"
-            strokeWidth="1.6"
+            strokeWidth="2"
             strokeLinecap="round"
             strokeLinejoin="round"
           />
         </svg>
       </span>
-      <span>{children}</span>
+      {children}
     </label>
   );
 }
@@ -279,27 +356,17 @@ function GoogleIcon() {
 
 function AppleIcon() {
   return (
-    <svg
-      width="18"
-      height="18"
-      viewBox="0 0 24 24"
-      fill="currentColor"
-      aria-hidden="true"
-    >
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
       <path d="M17.05 12.54c-.03-3.02 2.47-4.47 2.58-4.54-1.41-2.06-3.6-2.34-4.38-2.37-1.86-.19-3.64 1.1-4.58 1.1-.95 0-2.42-1.07-3.98-1.04-2.05.03-3.94 1.19-4.99 3.02-2.13 3.69-.54 9.16 1.53 12.15 1.01 1.46 2.22 3.1 3.81 3.04 1.53-.06 2.11-.99 3.96-.99s2.37.99 3.99.96c1.65-.03 2.69-1.49 3.69-2.96 1.16-1.69 1.64-3.33 1.66-3.41-.04-.02-3.2-1.23-3.24-4.87ZM14.03 3.66c.84-1.02 1.41-2.43 1.25-3.84-1.21.05-2.68.81-3.55 1.83-.78.9-1.46 2.34-1.28 3.72 1.35.1 2.73-.69 3.58-1.71Z" />
     </svg>
   );
 }
 
-function WindowsIcon({ className }) {
+function SmartphoneIcon() {
   return (
-    <svg
-      viewBox="0 0 24 24"
-      fill="currentColor"
-      className={className}
-      aria-hidden="true"
-    >
-      <path d="M3 4.7 10.7 3.6v7.7H3V4.7Zm8.8-1.25L21 2.1v9.2h-9.2V3.45ZM3 12.7h7.7v7.7L3 19.3v-6.6Zm8.8 0H21v9.2l-9.2-1.3v-7.9Z" />
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" className="shrink-0">
+      <rect x="5" y="2" width="14" height="20" rx="2" ry="2" />
+      <line x1="12" y1="18" x2="12.01" y2="18" />
     </svg>
   );
 }

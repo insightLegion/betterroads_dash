@@ -4,17 +4,14 @@ const LAYERS = [
   { id: 'history', label: 'History 6mo' },
 ];
 
-export default function MapStyleChips({ layer, setLayer }) {
+export default function MapStyleChips() {
   return (
     <div
       style={{
         position: 'absolute',
-        left: 392,
-        top: 64,
+        right: 16,
+        bottom: 74,
         zIndex: 500,
-        display: 'flex',
-        flexDirection: 'column',
-        gap: 12,
         width: 260,
       }}
     >
@@ -81,39 +78,7 @@ export default function MapStyleChips({ layer, setLayer }) {
         </div>
       </div>
 
-      {/* Layer selector pills */}
-      <div
-        className="glass-panel"
-        style={{
-          display: 'flex',
-          gap: 4,
-          padding: 4,
-          borderRadius: 'var(--radius-pill)',
-          boxShadow: '0 4px 12px rgba(0,0,0,0.06)',
-          alignSelf: 'flex-start',
-        }}
-      >
-        {LAYERS.map((l) => {
-          const active = layer === l.id;
-          return (
-            <button
-              key={l.id}
-              onClick={() => setLayer(l.id)}
-              style={{
-                padding: '6px 14px',
-                borderRadius: 'var(--radius-pill)',
-                fontSize: 12,
-                fontWeight: active ? 700 : 500,
-                background: active ? '#0a0a0a' : 'transparent',
-                color: active ? '#ffffff' : '#52504c',
-                transition: 'all var(--ease)',
-              }}
-            >
-              {l.label}
-            </button>
-          );
-        })}
-      </div>
+      {/* Layer selector pills removed per user request */}
     </div>
   );
 }

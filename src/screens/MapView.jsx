@@ -7,6 +7,7 @@ import LeftSidebar from './map/LeftSidebar.jsx';
 import TemporalScrubber from './map/TemporalScrubber.jsx';
 import ZoomControl from './map/ZoomControl.jsx';
 import MapStyleChips from './map/MapStyleChips.jsx';
+import RightContributionPanel from './map/RightContributionPanel.jsx';
 import WardPolygons from './map/WardPolygons.jsx';
 import DynamicOsmRoads from './map/DynamicOsmRoads.jsx';
 
@@ -15,6 +16,24 @@ function FlyController({ target }) {
   useEffect(() => {
     if (target) map.flyTo([target.lat, target.lng], Math.max(map.getZoom(), 14), { duration: 0.8 });
   }, [target, map]);
+  return null;
+}
+
+function GeolocationPromptController() {
+  const map = useMap();
+  useEffect(() => {
+    if ('geolocation' in navigator) {
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          map.flyTo([pos.coords.latitude, pos.coords.longitude], 14, { duration: 1.2 });
+        },
+        (err) => {
+          console.log('Location prompt dismissed or denied', err);
+        },
+        { timeout: 6000 }
+      );
+    }
+  }, [map]);
   return null;
 }
 
@@ -69,9 +88,6 @@ export default function MapView() {
           style={{ height: '100%', width: '100%' }}
           zoomControl={false}
         >
-          {/* attributionControl is left ON deliberately: with it disabled the
-              `attribution` prop below renders nowhere, and both the OSM tile
-              usage policy and ODbL require the credit to be visible. */}
           <TileLayer
             url="https://tile.openstreetmap.org/{z}/{x}/{y}.png"
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
@@ -92,12 +108,14 @@ export default function MapView() {
           )}
 
           <FlyController target={flyTarget} />
+          <GeolocationPromptController />
           <ZoomWatcher onZoomChange={setZoom} />
           <ZoomControl />
         </MapContainer>
 
         <Navbar variant="floating" />
-        <MapStyleChips layer={layer} setLayer={setLayer} />
+        <RightContributionPanel />
+        <MapStyleChips />
         <TemporalScrubber />
       </div>
     </div>

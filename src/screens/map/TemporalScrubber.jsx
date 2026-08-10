@@ -22,7 +22,7 @@ export default function TemporalScrubber() {
         gsap.fromTo(
           badgeRef.current,
           { scale: 0.85, opacity: 0.6 },
-          { scale: 1, opacity: 1, duration: 0.25, ease: 'back.out(1.7)' }
+          { scale: 1, opacity: 1, duration: 0.2, ease: 'back.out(1.5)' }
         );
       }
     },
@@ -70,76 +70,117 @@ export default function TemporalScrubber() {
         left: '50%',
         transform: 'translateX(-50%)',
         bottom: 20,
-        width: 'min(680px, calc(100% - 160px))',
+        width: 'min(620px, calc(100% - 160px))',
+        height: 42,
         borderRadius: 24,
-        padding: '12px 24px 14px',
+        padding: '0 16px',
         zIndex: 500,
-        boxShadow: '0 16px 36px -10px rgba(10, 10, 10, 0.16)',
+        boxShadow: '0 12px 28px -6px rgba(10, 10, 10, 0.12)',
         display: 'flex',
-        flexDirection: 'column',
-        gap: 8,
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        gap: 16,
       }}
     >
-      {/* Scrubber Top Bar */}
+      {/* Left: Info Label & Active Month */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0 }}>
+        <span
+          style={{
+            fontSize: 9,
+            fontWeight: 800,
+            color: '#8f8b85',
+            textTransform: 'uppercase',
+            letterSpacing: '0.08em',
+          }}
+        >
+          HISTORICAL TIMELINE
+        </span>
+        <span
+          ref={badgeRef}
+          className="mono"
+          style={{
+            fontSize: 11,
+            fontWeight: 800,
+            color: '#ffffff',
+            background: '#e0611c',
+            padding: '2px 8px',
+            borderRadius: 'var(--radius-pill)',
+          }}
+        >
+          {label}
+        </span>
+      </div>
+
+      {/* Center: Minimalist Slider */}
       <div
+        ref={trackRef}
+        onPointerDown={handleDown}
         style={{
+          flex: 1,
+          position: 'relative',
+          height: '100%',
+          cursor: 'pointer',
+          touchAction: 'none',
           display: 'flex',
-          justifyContent: 'space-between',
           alignItems: 'center',
+          minWidth: 120,
         }}
       >
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-          <div
-            style={{
-              width: 8,
-              height: 8,
-              borderRadius: '50%',
-              background: 'var(--accent)',
-              boxShadow: '0 0 8px var(--accent)',
-            }}
-          />
-          <span
-            className="font-display"
-            style={{
-              fontSize: 11,
-              fontWeight: 800,
-              color: '#0a0a0a',
-              textTransform: 'uppercase',
-              letterSpacing: '0.08em',
-            }}
-          >
-            HISTORICAL TIMELINE
-          </span>
-          <span
-            ref={badgeRef}
-            className="mono"
-            style={{
-              fontSize: 12,
-              fontWeight: 800,
-              color: '#ffffff',
-              background: '#0a0a0a',
-              padding: '3px 10px',
-              borderRadius: 'var(--radius-pill)',
-              letterSpacing: '0.02em',
-            }}
-          >
-            {label}
-          </span>
-        </div>
+        {/* Track Line */}
+        <div
+          style={{
+            position: 'absolute',
+            left: 0,
+            right: 0,
+            height: 3,
+            background: '#e7e5e2',
+            borderRadius: 1.5,
+          }}
+        />
 
+        {/* Fill Line */}
+        <div
+          style={{
+            position: 'absolute',
+            left: 0,
+            width: `${pct}%`,
+            height: 3,
+            background: '#e0611c',
+            borderRadius: 1.5,
+          }}
+        />
+
+        {/* Handle */}
+        <div
+          style={{
+            position: 'absolute',
+            left: `${pct}%`,
+            transform: 'translateX(-50%)',
+            width: 12,
+            height: 12,
+            borderRadius: '50%',
+            background: '#ffffff',
+            border: '2.5px solid #e0611c',
+            boxShadow: '0 2px 6px rgba(224, 97, 28, 0.4)',
+            pointerEvents: 'none',
+          }}
+        />
+      </div>
+
+      {/* Right: Reset Action / Status */}
+      <div style={{ flexShrink: 0, display: 'flex', alignItems: 'center' }}>
         {!isLatest ? (
           <button
             onClick={() => setSelectedMonthIndex(LAST_INDEX)}
             style={{
-              fontSize: 11,
+              fontSize: 10,
               fontWeight: 700,
-              color: 'var(--accent)',
+              color: '#e0611c',
               background: 'var(--accent-soft)',
-              padding: '4px 12px',
+              padding: '3px 10px',
               borderRadius: 'var(--radius-pill)',
               border: 'none',
               cursor: 'pointer',
-              transition: 'transform 150ms ease',
             }}
           >
             Jump to current →
@@ -147,108 +188,15 @@ export default function TemporalScrubber() {
         ) : (
           <span
             style={{
-              fontSize: 10,
-              fontWeight: 700,
-              color: 'var(--text-muted)',
+              fontSize: 9,
+              fontWeight: 800,
+              color: '#a8a29e',
               textTransform: 'uppercase',
-              letterSpacing: '0.06em',
             }}
           >
-            Latest Data
+            LATEST
           </span>
         )}
-      </div>
-
-      {/* Track & Slider */}
-      <div
-        ref={trackRef}
-        onPointerDown={handleDown}
-        style={{
-          position: 'relative',
-          height: 24,
-          cursor: 'pointer',
-          touchAction: 'none',
-          display: 'flex',
-          alignItems: 'center',
-        }}
-      >
-        {/* Base Track */}
-        <div
-          style={{
-            position: 'absolute',
-            left: 0,
-            right: 0,
-            height: 5,
-            background: '#e7e5e2',
-            borderRadius: 3,
-          }}
-        />
-
-        {/* Active Fill Track */}
-        <div
-          style={{
-            position: 'absolute',
-            left: 0,
-            width: `${pct}%`,
-            height: 5,
-            background: 'linear-gradient(90deg, #e0611c 0%, #f97316 100%)',
-            borderRadius: 3,
-          }}
-        />
-
-        {/* Month Ticks */}
-        {LABELS.map((lbl, i) => {
-          const p = (i / LAST_INDEX) * 100;
-          const active = i === selectedMonthIndex;
-          return (
-            <div
-              key={lbl}
-              style={{
-                position: 'absolute',
-                left: `${p}%`,
-                transform: 'translateX(-50%)',
-                width: active ? 4 : 2,
-                height: active ? 10 : 6,
-                background: active ? 'var(--accent)' : '#a8a29e',
-                borderRadius: 1,
-                pointerEvents: 'none',
-              }}
-            />
-          );
-        })}
-
-        {/* Handle */}
-        <div
-          style={{
-            position: 'absolute',
-            left: `${pct}%`,
-            transform: 'translate(-50%, 0)',
-            width: 18,
-            height: 18,
-            borderRadius: '50%',
-            background: '#ffffff',
-            border: '3px solid var(--accent)',
-            boxShadow: '0 2px 10px rgba(224, 97, 28, 0.4)',
-            pointerEvents: 'none',
-            transition: 'transform 100ms ease',
-          }}
-        />
-      </div>
-
-      {/* Bottom Labels */}
-      <div
-        style={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          fontSize: 10,
-          fontWeight: 600,
-          color: 'var(--text-muted)',
-          padding: '0 2px',
-        }}
-      >
-        <span>{LABELS[0]}</span>
-        <span>{LABELS[Math.floor(LAST_INDEX / 2)]}</span>
-        <span>{LABELS[LAST_INDEX]}</span>
       </div>
     </div>
   );

@@ -3,6 +3,7 @@ import Navbar from './components/Navbar.jsx';
 import MapView from './screens/MapView.jsx';
 import ComplaintView from './screens/ComplaintView.jsx';
 import ProfileView from './screens/ProfileView.jsx';
+import ContributorsView from './screens/ContributorsView.jsx';
 
 import { AuthComponent } from './components/ui/sign-up.jsx';
 
@@ -24,7 +25,7 @@ function Shell() {
         background: 'var(--surface-2)',
       }}
     >
-      {!isMap && activeScreen !== 'profile' && <Navbar />}
+      {!isMap && activeScreen !== 'profile' && activeScreen !== 'contributors' && <Navbar />}
       <main
         key={activeScreen}
         className="screen-fade"
@@ -33,6 +34,7 @@ function Shell() {
         {activeScreen === 'map' && <MapView />}
         {activeScreen === 'complaint' && <ComplaintView />}
         {activeScreen === 'profile' && <ProfileView />}
+        {activeScreen === 'contributors' && <ContributorsView />}
       </main>
     </div>
   );

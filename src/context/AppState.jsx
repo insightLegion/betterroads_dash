@@ -8,7 +8,7 @@ const DEFAULT_MONTH_INDEX = 11;
 export function AppStateProvider({ children }) {
   const getInitialScreen = () => {
     const hash = window.location.hash.replace('#', '');
-    if (['login', 'profile', 'complaint', 'map'].includes(hash)) return hash;
+    if (['login', 'profile', 'complaint', 'map', 'contributors'].includes(hash)) return hash;
     return 'map';
   };
 
@@ -26,7 +26,7 @@ export function AppStateProvider({ children }) {
   useEffect(() => {
     const handleHash = () => {
       const h = window.location.hash.replace('#', '');
-      if (['login', 'profile', 'complaint', 'map'].includes(h)) {
+      if (['login', 'profile', 'complaint', 'map', 'contributors'].includes(h)) {
         setActiveScreen(h);
       }
     };
