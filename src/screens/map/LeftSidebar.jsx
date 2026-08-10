@@ -1,4 +1,4 @@
-import { useMemo, useState, useRef } from 'react';
+import { useMemo, useRef } from 'react';
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
 import { AREAS, severityColorHex } from '../../data/areas.js';
@@ -7,15 +7,6 @@ import LocationDetail from './LocationDetail.jsx';
 import RoadDetail from './RoadDetail.jsx';
 
 gsap.registerPlugin(useGSAP);
-
-function SearchIcon() {
-  return (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" strokeWidth="1.8">
-      <circle cx="11" cy="11" r="7" />
-      <path d="M21 21l-4.3-4.3" strokeLinecap="round" />
-    </svg>
-  );
-}
 
 function AreaRow({ id, area, onSelect, monthIndex }) {
   const score = area.history[monthIndex] ?? area.score;
@@ -75,20 +66,8 @@ export default function LeftSidebar({ onPickArea }) {
     selectedMonthIndex,
   } = useAppState();
 
-  const [query, setQuery] = useState('');
   const containerRef = useRef(null);
-
   const entries = useMemo(() => Object.entries(AREAS), []);
-  const filtered = useMemo(() => {
-    const q = query.trim().toLowerCase();
-    if (!q) return entries;
-    return entries.filter(
-      ([, a]) =>
-        a.name.toLowerCase().includes(q) ||
-        a.ward.toLowerCase().includes(q) ||
-        a.roads.some((r) => r.toLowerCase().includes(q))
-    );
-  }, [entries, query]);
 
   const showRoadDetail = Boolean(selectedRoad);
   const showLocationDetail = !showRoadDetail && Boolean(selectedAreaId);
@@ -102,11 +81,10 @@ export default function LeftSidebar({ onPickArea }) {
         { opacity: 1, y: 0, duration: 0.3, stagger: 0.03, ease: 'power2.out' }
       );
     },
-    { dependencies: [filtered.length, showRoadDetail, showLocationDetail], scope: containerRef }
+    { dependencies: [entries.length, showRoadDetail, showLocationDetail], scope: containerRef }
   );
 
   const handleSelect = (id) => {
-    setQuery('');
     setSelectedRoad(null);
     onPickArea(id);
   };
@@ -150,46 +128,7 @@ export default function LeftSidebar({ onPickArea }) {
         </div>
       </div>
 
-      {/* Search Input Area */}
-      <div style={{ padding: '12px 16px', borderBottom: 'var(--border)' }}>
-        <div
-          style={{
-            background: 'var(--surface-2)',
-            borderRadius: 'var(--radius-pill)',
-            padding: '8px 14px',
-            display: 'flex',
-            alignItems: 'center',
-            gap: 8,
-            border: 'var(--border)',
-          }}
-        >
-          <SearchIcon />
-          <input
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search area, road or ward"
-            style={{
-              border: 'none',
-              background: 'transparent',
-              flex: 1,
-              fontSize: 13,
-              padding: 0,
-              outline: 'none',
-            }}
-          />
-          {query && (
-            <button
-              onClick={() => setQuery('')}
-              aria-label="Clear"
-              style={{ color: 'var(--text-muted)', fontSize: 16, lineHeight: 1 }}
-            >
-              ×
-            </button>
-          )}
-        </div>
-      </div>
-
-      {/* Area Lists / Details */}
+      {/* Area Lists / Details (Search moved to top Navbar) */}
       <div style={{ flex: 1, minHeight: 0, overflowY: 'auto' }}>
         {showRoadDetail ? (
           <RoadDetail
@@ -213,11 +152,9 @@ export default function LeftSidebar({ onPickArea }) {
                 fontWeight: 700,
               }}
             >
-              {query
-                ? `${filtered.length} result${filtered.length === 1 ? '' : 's'}`
-                : 'All monitored areas'}
+              All monitored areas
             </div>
-            {filtered.map(([id, area]) => (
+            {entries.map(([id, area]) => (
               <AreaRow
                 key={id}
                 id={id}
@@ -226,11 +163,6 @@ export default function LeftSidebar({ onPickArea }) {
                 monthIndex={selectedMonthIndex}
               />
             ))}
-            {filtered.length === 0 && (
-              <div style={{ padding: 20, fontSize: 12, color: 'var(--text-muted)' }}>
-                No matches for “{query}”.
-              </div>
-            )}
           </div>
         )}
       </div>

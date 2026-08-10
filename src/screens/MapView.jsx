@@ -19,6 +19,20 @@ function FlyController({ target }) {
   return null;
 }
 
+function CityJumpController() {
+  const map = useMap();
+  useEffect(() => {
+    const handleJump = (e) => {
+      if (e.detail && e.detail.lat && e.detail.lng) {
+        map.flyTo([e.detail.lat, e.detail.lng], 12, { duration: 1.2 });
+      }
+    };
+    window.addEventListener('city-jump', handleJump);
+    return () => window.removeEventListener('city-jump', handleJump);
+  }, [map]);
+  return null;
+}
+
 function GeolocationPromptController() {
   const map = useMap();
   useEffect(() => {
@@ -108,6 +122,7 @@ export default function MapView() {
           )}
 
           <FlyController target={flyTarget} />
+          <CityJumpController />
           <GeolocationPromptController />
           <ZoomWatcher onZoomChange={setZoom} />
           <ZoomControl />
