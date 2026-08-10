@@ -6,13 +6,13 @@ function SectionTitle({ children }) {
   return (
     <div
       style={{
-        fontSize: 11,
+        fontSize: 12.5,
         color: 'var(--text-muted)',
         textTransform: 'uppercase',
         letterSpacing: 0.4,
         marginBottom: 10,
         marginTop: 20,
-        fontWeight: 500,
+        fontWeight: 600,
       }}
     >
       {children}
@@ -29,14 +29,14 @@ function Row({ label, value, mono }) {
         alignItems: 'baseline',
         gap: 12,
         padding: '8px 0',
-        fontSize: 13,
+        fontSize: 14.5,
         borderTop: 'var(--border)',
       }}
     >
       <span style={{ color: 'var(--text-muted)' }}>{label}</span>
       <span
         className={mono ? 'mono' : ''}
-        style={{ color: 'var(--text)', fontWeight: 500, textAlign: 'right' }}
+        style={{ color: 'var(--text)', fontWeight: 600, textAlign: 'right' }}
       >
         {value}
       </span>
@@ -48,7 +48,7 @@ function StatusPill({ status }) {
   const palette = {
     Active: { bg: 'var(--accent-tint)', fg: 'var(--accent)' },
     'Late stage': { bg: 'var(--average-light)', fg: '#8a5a10' },
-    Expired: { bg: 'var(--severe-light)', fg: 'var(--severe)' },
+    Expired: { bg: 'var(--severe-light)', fg: '#8a5a10' },
   }[status] || { bg: 'var(--surface-2)', fg: 'var(--text-muted)' };
   return (
     <span
@@ -56,8 +56,8 @@ function StatusPill({ status }) {
         display: 'inline-block',
         background: palette.bg,
         color: palette.fg,
-        fontSize: 11,
-        fontWeight: 500,
+        fontSize: 12.5,
+        fontWeight: 600,
         padding: '2px 10px',
         borderRadius: 'var(--radius-pill)',
       }}

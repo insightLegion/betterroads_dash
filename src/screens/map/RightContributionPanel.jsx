@@ -53,9 +53,9 @@ export default function RightContributionPanel() {
       style={{
         position: 'absolute',
         right: 16,
-        top: 64,
+        top: 72,
         width: 330,
-        maxHeight: 'calc(100vh - 225px)',
+        maxHeight: 'calc(100vh - 244px)',
         overflowY: 'auto',
         borderRadius: 18,
         padding: 16,
@@ -72,7 +72,7 @@ export default function RightContributionPanel() {
         <h2
           className="font-display"
           style={{
-            fontSize: 18,
+            fontSize: 20,
             fontWeight: 800,
             color: '#0a0a0a',
             margin: 0,
@@ -83,7 +83,7 @@ export default function RightContributionPanel() {
         </h2>
         <p
           style={{
-            fontSize: 11,
+            fontSize: 12.5,
             color: 'var(--text-muted)',
             margin: '3px 0 0',
             lineHeight: 1.3,
@@ -120,7 +120,7 @@ export default function RightContributionPanel() {
               </svg>
               <span
                 style={{
-                  fontSize: 9,
+                  fontSize: 10,
                   fontWeight: 900,
                   color: 'rgba(255,255,255,0.92)',
                   letterSpacing: '0.08em',
@@ -130,11 +130,11 @@ export default function RightContributionPanel() {
                 MAPPING LIVE
               </span>
             </div>
-            <div style={{ fontSize: 15, fontWeight: 800, color: '#ffffff', marginTop: 4 }}>
+            <div style={{ fontSize: 17, fontWeight: 800, color: '#ffffff', marginTop: 4 }}>
               Riya T.
             </div>
           </div>
-          <div style={{ fontSize: 11, color: 'rgba(255, 255, 255, 0.95)', lineHeight: 1.3, fontWeight: 500 }}>
+          <div style={{ fontSize: 12.5, color: 'rgba(255, 255, 255, 0.95)', lineHeight: 1.3, fontWeight: 500 }}>
             mapped 6.8 km in Chennai
           </div>
         </div>
@@ -155,10 +155,10 @@ export default function RightContributionPanel() {
         >
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 4 }}>
-              <span style={{ fontSize: 12, fontWeight: 900, color: '#ffffff' }}>₹</span>
+              <span style={{ fontSize: 13, fontWeight: 900, color: '#ffffff' }}>₹</span>
               <span
                 style={{
-                  fontSize: 9,
+                  fontSize: 10,
                   fontWeight: 900,
                   color: 'rgba(255,255,255,0.92)',
                   letterSpacing: '0.08em',
@@ -168,11 +168,11 @@ export default function RightContributionPanel() {
                 CONTRIBUTION
               </span>
             </div>
-            <div style={{ fontSize: 15, fontWeight: 800, color: '#ffffff', marginTop: 4 }}>
+            <div style={{ fontSize: 17, fontWeight: 800, color: '#ffffff', marginTop: 4 }}>
               Anika D.
             </div>
           </div>
-          <div style={{ fontSize: 11, color: 'rgba(255, 255, 255, 0.95)', lineHeight: 1.3, fontWeight: 500 }}>
+          <div style={{ fontSize: 12.5, color: 'rgba(255, 255, 255, 0.95)', lineHeight: 1.3, fontWeight: 500 }}>
             contributed ₹2,500
           </div>
         </div>
@@ -188,7 +188,7 @@ export default function RightContributionPanel() {
           background: 'var(--surface-2)',
           border: '1px solid #e7e5e2',
           color: 'var(--text)',
-          fontSize: 11,
+          fontSize: 12.5,
           fontWeight: 700,
           cursor: 'pointer',
           display: 'flex',
@@ -213,7 +213,7 @@ export default function RightContributionPanel() {
 
       {/* Mobile Sensor Profile Section (with fixed label/value spacing) */}
       <div style={{ borderTop: '1px solid #e7e5e2', paddingTop: 10 }}>
-        <div style={{ fontSize: 11, fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 8 }}>
+        <div style={{ fontSize: 12.5, fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 8 }}>
           Mobile sensor profile
         </div>
 
@@ -252,10 +252,10 @@ export default function RightContributionPanel() {
       {/* Recent Nearby Incidents Section */}
       <div style={{ borderTop: '1px solid #e7e5e2', paddingTop: 10 }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
-          <span style={{ fontSize: 11, fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+          <span style={{ fontSize: 12.5, fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
             Recent Nearby Incidents
           </span>
-          <span style={{ fontSize: 10, color: 'var(--accent)', fontWeight: 700 }}>Nearby 2 km</span>
+          <span style={{ fontSize: 11, color: 'var(--accent)', fontWeight: 700 }}>Nearby 2 km</span>
         </div>
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
@@ -273,12 +273,12 @@ export default function RightContributionPanel() {
               }}
             >
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <div style={{ fontSize: 12, fontWeight: 700, color: '#0a0a0a' }}>
+                <div style={{ fontSize: 13.5, fontWeight: 700, color: '#0a0a0a' }}>
                   {item.title}
                 </div>
                 <span
                   style={{
-                    fontSize: 9,
+                    fontSize: 10,
                     fontWeight: 800,
                     padding: '2px 6px',
                     borderRadius: 4,
@@ -295,7 +295,7 @@ export default function RightContributionPanel() {
                   display: 'flex',
                   alignItems: 'center',
                   gap: 8,
-                  fontSize: 11,
+                  fontSize: 12,
                   color: 'var(--text-muted)',
                   marginTop: 2,
                 }}
@@ -328,11 +328,11 @@ function StatBox({ label, value, icon }) {
     >
       <div style={{ display: 'flex', alignItems: 'center', gap: 8, flex: 1, minWidth: 0 }}>
         {icon}
-        <span style={{ fontSize: 12, color: 'var(--text-muted)', fontWeight: 500, whiteSpace: 'nowrap' }}>
+        <span style={{ fontSize: 13.5, color: 'var(--text-muted)', fontWeight: 500, whiteSpace: 'nowrap' }}>
           {label}
         </span>
       </div>
-      <span className="mono" style={{ fontSize: 13, fontWeight: 800, color: '#0a0a0a', flexShrink: 0, marginLeft: 'auto' }}>
+      <span className="mono" style={{ fontSize: 15, fontWeight: 800, color: '#0a0a0a', flexShrink: 0, marginLeft: 'auto' }}>
         {value}
       </span>
     </div>

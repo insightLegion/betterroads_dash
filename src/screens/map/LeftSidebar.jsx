@@ -119,7 +119,7 @@ export default function LeftSidebar({ onPickArea }) {
       style={{
         position: 'absolute',
         left: 16,
-        top: 64,
+        top: 72,
         bottom: 16,
         width: 360,
         borderRadius: 16,

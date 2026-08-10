@@ -10,13 +10,13 @@ function SectionTitle({ children }) {
   return (
     <div
       style={{
-        fontSize: 11,
+        fontSize: 12.5,
         color: 'var(--text-muted)',
         textTransform: 'uppercase',
         letterSpacing: 0.4,
         marginBottom: 10,
         marginTop: 20,
-        fontWeight: 500,
+        fontWeight: 600,
       }}
     >
       {children}
@@ -63,10 +63,10 @@ export default function LocationDetail({ areaId, onBack }) {
           </svg>
         </button>
         <div style={{ flex: 1 }}>
-          <div style={{ fontSize: 16, fontWeight: 500 }}>{area.name}</div>
+          <div style={{ fontSize: 18, fontWeight: 700 }}>{area.name}</div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 4 }}>
             <WardPill ward={area.ward} />
-            <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>
+            <span style={{ fontSize: 12.5, color: 'var(--text-muted)' }}>
               Last surveyed 2 days ago
             </span>
           </div>

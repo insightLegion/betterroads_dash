@@ -29,7 +29,7 @@ export default function MapStyleChips() {
       >
         <span
           style={{
-            fontSize: 11,
+            fontSize: 12.5,
             fontWeight: 800,
             color: '#52504c',
             textTransform: 'uppercase',
@@ -38,7 +38,7 @@ export default function MapStyleChips() {
         >
           ROAD QUALITY
         </span>
-        <span style={{ fontSize: 10, fontWeight: 700, color: 'var(--text-muted)' }}>
+        <span style={{ fontSize: 11.5, fontWeight: 700, color: 'var(--text-muted)' }}>
           0 to 100 RQI
         </span>
       </div>
@@ -58,7 +58,7 @@ export default function MapStyleChips() {
           style={{
             display: 'flex',
             justifyContent: 'space-between',
-            fontSize: 10,
+            fontSize: 11.5,
             fontWeight: 700,
             color: '#8f8b85',
             marginTop: 4,
@@ -96,8 +96,8 @@ export default function MapStyleChips() {
               lineHeight: 1.2,
             }}
           >
-            <span style={{ fontSize: 10, fontWeight: 800 }}>{item.label}</span>
-            <span style={{ fontSize: 9, fontWeight: 600, opacity: 0.85, marginTop: 1 }}>{item.range}</span>
+            <span style={{ fontSize: 11.5, fontWeight: 800 }}>{item.label}</span>
+            <span style={{ fontSize: 10.5, fontWeight: 600, opacity: 0.85, marginTop: 1 }}>{item.range}</span>
           </div>
         ))}
       </div>

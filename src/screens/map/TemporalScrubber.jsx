@@ -86,7 +86,7 @@ export default function TemporalScrubber() {
       <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0 }}>
         <span
           style={{
-            fontSize: 9,
+            fontSize: 10.5,
             fontWeight: 800,
             color: '#8f8b85',
             textTransform: 'uppercase',
@@ -99,11 +99,11 @@ export default function TemporalScrubber() {
           ref={badgeRef}
           className="mono"
           style={{
-            fontSize: 11,
+            fontSize: 12.5,
             fontWeight: 800,
             color: '#ffffff',
             background: '#e0611c',
-            padding: '2px 8px',
+            padding: '3px 10px',
             borderRadius: 'var(--radius-pill)',
           }}
         >
