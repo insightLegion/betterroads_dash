@@ -1,6 +1,6 @@
 const PRIORITIES = [
   { id: 'urgent', label: 'Urgent', color: 'var(--severe)', hex: '#E24B4A' },
-  { id: 'normal', label: 'Normal', color: 'var(--minor)', hex: '#EF9F27' },
+  { id: 'normal', label: 'Normal', color: 'var(--average)', hex: '#EF9F27' },
   { id: 'low', label: 'Low', color: 'var(--good)', hex: '#639922' },
 ];
 

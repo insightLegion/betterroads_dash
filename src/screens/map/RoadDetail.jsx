@@ -47,7 +47,7 @@ function Row({ label, value, mono }) {
 function StatusPill({ status }) {
   const palette = {
     Active: { bg: 'var(--accent-tint)', fg: 'var(--accent)' },
-    'Late stage': { bg: 'var(--minor-light)', fg: '#8a5a10' },
+    'Late stage': { bg: 'var(--average-light)', fg: '#8a5a10' },
     Expired: { bg: 'var(--severe-light)', fg: 'var(--severe)' },
   }[status] || { bg: 'var(--surface-2)', fg: 'var(--text-muted)' };
   return (

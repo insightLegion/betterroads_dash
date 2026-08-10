@@ -65,7 +65,7 @@ export const AREAS = {
     stats: { total: 7, resolved: 4, pending: 3, noResponse: 0, avgDays: 18 }
   },
   'kurla': {
-    name: 'Kurla', ward: 'L Ward', wardOfficer: 'Ward Officer L Ward',
+    name: 'Kurla', ward: 'L Ward', wardOfficer: 'Shri Dhanaji Herwade',
     wardEmail: 'ac.l@mcgm.gov.in', wardPhone: '022-26505103',
     wardAddress: 'Kurla Municipal Market Building, S.G. Barve Road, Kurla (W), Mumbai 400070',
     lat: 19.0728, lng: 72.8826,
@@ -75,14 +75,15 @@ export const AREAS = {
     roads: ['LBS Marg', 'Kurla-Andheri Road', 'Nehru Nagar Road', 'Sion-Kurla Road', 'BKC Link Road'],
     history: [66,68,64,44,68,72,44,66,68,65,32,38],
     historyLabels: ['Apr 25','May 25','Jun 25','Jul 25','Aug 25','Sep 25','Oct 25','Nov 25','Dec 25','Jan 26','Feb 26','Apr 26'],
-    stats: { total: 18, resolved: 2, pending: 6, noResponse: 10, avgDays: 38 }
+    stats: { total: 18, resolved: 2, pending: 6, noResponse: 10, avgDays: 38 },
+    contractor: { name: 'Mahavir Roads & Infrastructure', reg: 'BMC-RD-2021-MRI', tender: 'TDR-2023-KRL-302', contractDate: '2023-01-20', budget: '₹9.8 Cr', guaranteeYears: 3 }
   }
 };
 
 export function getSeverityColor(severity) {
   switch (severity) {
     case 'Good': return 'var(--good)';
-    case 'Minor': return 'var(--minor)';
+    case 'Average': return 'var(--average)';
     case 'Poor': return 'var(--poor)';
     case 'Severe': return 'var(--severe)';
     default: return 'var(--text-muted)';
@@ -90,18 +91,18 @@ export function getSeverityColor(severity) {
 }
 
 export function scoreToSeverity(score) {
-  if (score >= 60) return 'Good';
-  if (score >= 45) return 'Minor';
-  if (score >= 30) return 'Poor';
+  if (score >= 75) return 'Good';
+  if (score >= 50) return 'Average';
+  if (score >= 25) return 'Poor';
   return 'Severe';
 }
 
 export function severityColorHex(severity) {
   switch (severity) {
-    case 'Good': return '#639922';
-    case 'Minor': return '#EF9F27';
-    case 'Poor': return '#D85A30';
-    case 'Severe': return '#E24B4A';
+    case 'Good': return '#22c55e';
+    case 'Average': return '#eab308';
+    case 'Poor': return '#f97316';
+    case 'Severe': return '#ef4444';
     default: return '#6b7280';
   }
 }
@@ -191,7 +192,7 @@ export function getRoadDetails(areaId, roadName, monthIndex = 11) {
   const severity = scoreToSeverity(score);
 
   const slaDays = severity === 'Severe' ? 14 : severity === 'Poor' ? 21 : 30;
-  const potholes = severity === 'Severe' ? 6 + (h % 6) : severity === 'Poor' ? 3 + (h % 4) : severity === 'Minor' ? 1 + (h % 3) : 0;
+  const potholes = severity === 'Severe' ? 6 + (h % 6) : severity === 'Poor' ? 3 + (h % 4) : severity === 'Average' ? 1 + (h % 3) : 0;
 
   const tenderId = `BMC/RD/${area.ward.replace(/[^A-Z]/g, '')}/2024-${String((h % 90) + 10).padStart(3, '0')}`;
 

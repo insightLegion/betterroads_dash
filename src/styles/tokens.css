@@ -14,11 +14,13 @@
   --text-caption: #8f8b85;
 
   --good: #22c55e;
+  --average: #eab308;
   --minor: #eab308;
   --poor: #f97316;
   --severe: #ef4444;
 
   --good-light: #dcfce7;
+  --average-light: #fef9c3;
   --minor-light: #fef9c3;
   --poor-light: #ffedd5;
   --severe-light: #fee2e2;

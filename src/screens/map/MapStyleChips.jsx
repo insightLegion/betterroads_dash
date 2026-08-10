@@ -15,72 +15,91 @@ export default function MapStyleChips() {
         background: 'rgba(255, 255, 255, 0.94)',
         display: 'flex',
         flexDirection: 'column',
-        gap: 8,
+        gap: 12,
       }}
     >
+      {/* Header Title & Metric */}
       <div
         style={{
-          fontSize: 11,
-          fontWeight: 800,
-          color: '#52504c',
-          textTransform: 'uppercase',
-          letterSpacing: '0.08em',
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          width: '100%',
         }}
       >
-        ROAD QUALITY
+        <span
+          style={{
+            fontSize: 11,
+            fontWeight: 800,
+            color: '#52504c',
+            textTransform: 'uppercase',
+            letterSpacing: '0.08em',
+          }}
+        >
+          ROAD QUALITY
+        </span>
+        <span style={{ fontSize: 10, fontWeight: 700, color: 'var(--text-muted)' }}>
+          0 to 100 RQI
+        </span>
       </div>
 
-      {/* 0-100 Gradient Scale */}
-      <div
-        style={{
-          height: 7,
-          borderRadius: 4,
-          background: 'linear-gradient(90deg, #ef4444 0%, #f97316 35%, #eab308 60%, #22c55e 100%)',
-        }}
-      />
+      {/* 0-100 Color Scale Bar (height 10px, exact 330px width card) */}
+      <div style={{ position: 'relative', width: '100%' }}>
+        <div
+          style={{
+            height: 10,
+            borderRadius: 6,
+            background: 'linear-gradient(90deg, #ef4444 0%, #f97316 33%, #eab308 66%, #22c55e 100%)',
+            boxShadow: 'inset 0 1px 2px rgba(0,0,0,0.1)',
+          }}
+        />
+        {/* Scale Range Markers correctly spaced with justifyContent */}
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            fontSize: 10,
+            fontWeight: 700,
+            color: '#8f8b85',
+            marginTop: 4,
+            padding: '0 2px',
+          }}
+        >
+          <span>0</span>
+          <span>25</span>
+          <span>50</span>
+          <span>75</span>
+          <span>100</span>
+        </div>
+      </div>
 
-      
-
-      {/* NEW: Severity Category Pills (Severe, Poor, Minor, Good) */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 6, paddingTop: 4 }}>
+      {/* Severity Category Pills (Severe, Poor, Average, Good) */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 6, paddingTop: 2 }}>
         {[
-          { label: 'Severe', bg: '#ef4444' },
-          { label: 'Poor', bg: '#f97316' },
-          { label: 'Minor', bg: '#eab308' },
-          { label: 'Good', bg: '#22c55e' },
+          { label: 'Severe', range: '0-25', bg: '#ef4444' },
+          { label: 'Poor', range: '25-50', bg: '#f97316' },
+          { label: 'Average', range: '50-75', bg: '#eab308' },
+          { label: 'Good', range: '75-100', bg: '#22c55e' },
         ].map((item) => (
           <div
             key={item.label}
             style={{
-              padding: '3px 0',
-              borderRadius: 6,
+              padding: '6px 0',
+              borderRadius: 8,
               background: `${item.bg}15`,
               color: item.bg,
               border: `1px solid ${item.bg}33`,
-              fontSize: 10,
-              fontWeight: 800,
-              textAlign: 'center',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
+              lineHeight: 1.2,
             }}
           >
-            {item.label}
+            <span style={{ fontSize: 10, fontWeight: 800 }}>{item.label}</span>
+            <span style={{ fontSize: 9, fontWeight: 600, opacity: 0.85, marginTop: 1 }}>{item.range}</span>
           </div>
         ))}
-      </div>
-
-      {/* Reported Event Marker Legend item */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: 8, paddingTop: 6, borderTop: '1px solid #f0eee9' }}>
-        <span
-          style={{
-            width: 8,
-            height: 8,
-            borderRadius: '50%',
-            background: '#0a0a0a',
-            boxShadow: '0 0 0 2px rgba(10, 10, 10, 0.15)',
-          }}
-        />
-        <span style={{ fontSize: 11, fontWeight: 500, color: '#52504c' }}>
-          Reported event <span style={{ color: '#8f8b85' }}>(potholes &amp; more)</span>
-        </span>
       </div>
     </div>
   );

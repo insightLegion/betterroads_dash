@@ -27,7 +27,7 @@ const NEARBY_INCIDENTS = [
     title: 'Unpatched Trench on Link Road',
     distance: '1.4 km away',
     time: '3 hours ago',
-    severity: 'Minor',
+    severity: 'Average',
     color: '#eab308',
   },
 ];
@@ -87,9 +87,13 @@ export default function RightContributionPanel() {
             color: 'var(--text-muted)',
             margin: '3px 0 0',
             lineHeight: 1.3,
+            display: 'flex',
+            alignItems: 'center',
+            gap: 6,
           }}
         >
-          9 visible roads from approved mobile sensor data
+          <span style={{ display: 'inline-block', width: 6, height: 6, borderRadius: '50%', background: '#16a34a', boxShadow: '0 0 6px #16a34a', flexShrink: 0 }} />
+          9 visible roads · live sensor data
         </p>
       </div>
 
@@ -103,7 +107,7 @@ export default function RightContributionPanel() {
             padding: 12,
             display: 'flex',
             flexDirection: 'column',
-            justify: 'space-between',
+            justifyContent: 'space-between',
             minHeight: 116,
             color: '#ffffff',
             boxShadow: '0 4px 14px rgba(224, 97, 28, 0.25)',
@@ -143,7 +147,7 @@ export default function RightContributionPanel() {
             padding: 12,
             display: 'flex',
             flexDirection: 'column',
-            justify: 'space-between',
+            justifyContent: 'space-between',
             minHeight: 116,
             color: '#ffffff',
             boxShadow: '0 4px 14px rgba(234, 88, 12, 0.25)',

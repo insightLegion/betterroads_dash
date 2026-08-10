@@ -86,7 +86,7 @@ export default function FilingPanel({ area }) {
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
         <StatTile label="Total filed" value={area.stats.total} />
         <StatTile label="Resolved" value={area.stats.resolved} color="var(--good)" />
-        <StatTile label="Pending" value={area.stats.pending} color="var(--minor)" />
+        <StatTile label="Pending" value={area.stats.pending} color="var(--average)" />
         <StatTile label="No response" value={area.stats.noResponse} color="var(--severe)" />
         <StatTile label="Avg days to resolve" value={`${area.stats.avgDays} d`} />
       </div>

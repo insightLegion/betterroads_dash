@@ -9,7 +9,7 @@ import RoadDetail from './RoadDetail.jsx';
 gsap.registerPlugin(useGSAP);
 
 function AreaRow({ id, area, onSelect, monthIndex }) {
-  const score = area.history[monthIndex] ?? area.score;
+  const score = area?.history?.[monthIndex] ?? area?.score ?? 50;
   const color = severityColorHex(area.severity);
   return (
     <button
@@ -22,9 +22,18 @@ function AreaRow({ id, area, onSelect, monthIndex }) {
         width: '100%',
         padding: '12px 20px',
         textAlign: 'left',
-        borderBottom: 'var(--border)',
+        borderBottom: '1px solid transparent',
         background: 'transparent',
-        transition: 'background 150ms ease',
+        transition: 'background 200ms ease, border-color 200ms ease',
+        cursor: 'pointer',
+      }}
+      onMouseEnter={(e) => {
+        e.currentTarget.style.borderBottomColor = '#e7e5e2';
+        e.currentTarget.style.background = 'var(--surface-2)';
+      }}
+      onMouseLeave={(e) => {
+        e.currentTarget.style.borderBottomColor = 'transparent';
+        e.currentTarget.style.background = 'transparent';
       }}
     >
       <span
@@ -38,21 +47,35 @@ function AreaRow({ id, area, onSelect, monthIndex }) {
         }}
       />
       <div style={{ flex: 1, minWidth: 0 }}>
-        <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--text)' }}>{area.name}</div>
-        <div style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 2 }}>
-          {area.ward} · {area.severity}
+        <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--text)' }}>{area.name}</div>
+        <div style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 2 }}>
+          {area.ward}
         </div>
       </div>
-      <span
-        className="mono"
-        style={{
-          fontSize: 13,
-          fontWeight: 700,
-          color: 'var(--text)',
-        }}
-      >
-        {score}
-      </span>
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
+        <span
+          className="mono"
+          style={{
+            fontSize: 14,
+            fontWeight: 800,
+            color: 'var(--text)',
+          }}
+        >
+          {score}
+        </span>
+        <span
+          style={{
+            fontSize: 10,
+            fontWeight: 800,
+            color: color,
+            letterSpacing: '0.05em',
+            textTransform: 'uppercase',
+            marginTop: 1,
+          }}
+        >
+          {area.severity}
+        </span>
+      </div>
     </button>
   );
 }
