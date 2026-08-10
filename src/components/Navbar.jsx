@@ -230,9 +230,7 @@ export default function Navbar({ variant = 'default' }) {
               <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#16a34a', boxShadow: '0 0 6px #16a34a' }} />
               ACTIVE CONTRIBUTORS
             </div>
-            <div style={{ fontSize: 9, color: 'var(--text-muted)', fontWeight: 500, marginTop: 2 }}>
-              In current viewport
-            </div>
+            
           </div>
 
           {/* Overlapping Avatar Stack */}
