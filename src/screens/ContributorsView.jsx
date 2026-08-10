@@ -54,7 +54,7 @@ export default function ContributorsView() {
     <div
       ref={containerRef}
       style={{
-        minHeight: '100vh',
+        minHeight: '100%',
         background: 'var(--surface-2)',
         display: 'flex',
         flexDirection: 'column',

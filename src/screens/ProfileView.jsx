@@ -201,6 +201,68 @@ export default function ProfileView() {
           <StatCard label="Distance Telemetry" value="284 km" subtext="Ridden on sensor app" color="#3b82f6" />
         </section>
 
+        {/* Community Leaderboard Banner Access */}
+        <section
+          className="profile-section"
+          style={{
+            background: 'linear-gradient(135deg, #fff7ed 0%, #ffedd5 100%)',
+            border: '1px solid #fed7aa',
+            borderRadius: 16,
+            padding: '14px 20px',
+            display: 'flex',
+            alignItems: 'center',
+            justify: 'space-between',
+            gap: 16,
+            boxShadow: '0 4px 12px rgba(224, 97, 28, 0.06)',
+          }}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+            <div
+              style={{
+                width: 38,
+                height: 38,
+                borderRadius: '50%',
+                background: 'var(--accent)',
+                color: '#ffffff',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: 18,
+                flexShrink: 0,
+                boxShadow: '0 4px 10px rgba(224, 97, 28, 0.25)',
+              }}
+            >
+              🏆
+            </div>
+            <div>
+              <div style={{ fontSize: 14, fontWeight: 800, color: '#9a3412' }}>
+                See How You Rank Among India's Top Citizen Mappers
+              </div>
+              <div style={{ fontSize: 12, color: '#c2410c', marginTop: 2 }}>
+                Explore live telemetry rankings, top ward validators, and community sponsors.
+              </div>
+            </div>
+          </div>
+
+          <button
+            onClick={() => navigateTo('contributors')}
+            style={{
+              padding: '9px 18px',
+              borderRadius: 'var(--radius-pill)',
+              background: 'var(--accent)',
+              color: '#ffffff',
+              fontSize: 13,
+              fontWeight: 800,
+              border: 'none',
+              cursor: 'pointer',
+              whiteSpace: 'nowrap',
+              boxShadow: '0 3px 10px rgba(224, 97, 28, 0.3)',
+            }}
+          >
+            View Leaderboard &amp; Top Mappers →
+          </button>
+        </section>
+
         {/* My Activity & Complaints Feed */}
         <section
           className="profile-section glass-panel"

@@ -298,7 +298,20 @@ export default function Navbar({ variant = 'default' }) {
         {/* FLUSHED RIGHTMOST ACTION CLUSTER */}
         <div style={{ display: 'flex', alignItems: 'center', gap: 18, marginLeft: 'auto', flexShrink: 0 }}>
           {/* Active Contributors Badge & Avatar Stack */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+          <button
+            type="button"
+            onClick={() => navigateTo('contributors')}
+            title="View Full Leaderboard & Active Contributors"
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 10,
+              cursor: 'pointer',
+              background: 'transparent',
+              border: 'none',
+              padding: 0,
+            }}
+          >
             <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, fontWeight: 800, color: '#16a34a', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
               <span style={{ width: 8, height: 8, borderRadius: '50%', background: '#16a34a', boxShadow: '0 0 6px #16a34a' }} />
               ACTIVE CONTRIBUTORS
@@ -307,14 +320,15 @@ export default function Navbar({ variant = 'default' }) {
             {/* Overlapping Avatar Stack */}
             <div style={{ display: 'flex', alignItems: 'center' }}>
               {[
-                { text: 'E', bg: '#ec4899' },
-                { text: 'M', bg: '#14b8a6' },
-                { text: 'P', bg: '#e0611c' },
-                { text: '#8b5cf6', bg: '#8b5cf6' },
-                { text: '+16', bg: '#334155' },
+                { text: 'E', bg: '#ec4899', name: 'Esha' },
+                { text: 'M', bg: '#14b8a6', name: 'Manish' },
+                { text: 'P', bg: '#e0611c', name: 'Priya' },
+                { text: 'P', bg: '#8b5cf6', name: 'Parth' },
+                { text: '+16', bg: '#334155', name: '16 More Active' },
               ].map((av, idx) => (
                 <div
                   key={idx}
+                  title={av.name}
                   style={{
                     width: 28,
                     height: 28,
@@ -335,7 +349,7 @@ export default function Navbar({ variant = 'default' }) {
                 </div>
               ))}
             </div>
-          </div>
+          </button>
 
           {/* Navigation Action Buttons */}
           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>

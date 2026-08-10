@@ -28,8 +28,8 @@ function Shell() {
       {!isMap && activeScreen !== 'profile' && activeScreen !== 'contributors' && <Navbar />}
       <main
         key={activeScreen}
-        className="screen-fade"
-        style={{ flex: 1, minHeight: 0, position: 'relative', overflow: 'hidden' }}
+        className="screen-fade custom-scrollbar"
+        style={{ flex: 1, minHeight: 0, position: 'relative', overflowY: isMap ? 'hidden' : 'auto' }}
       >
         {activeScreen === 'map' && <MapView />}
         {activeScreen === 'complaint' && <ComplaintView />}
